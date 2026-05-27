@@ -1,0 +1,902 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doki Doki Fantasista SQUAD</title>
+    <style>
+        @font-face {
+            font-family: 'VerilySerifMono';
+            src: url('https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/VerilySerifMono.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        :root {
+            /* Light Theme Values */
+            --pink-bg: #ffbde1;
+            --pink-accent: #ff70bd;
+            --shadow: rgba(0, 0, 0, 0.15);
+            --font-main: 'VerilySerifMono';
+            --game-width: 1280;
+            --game-height: 720;
+
+            /* Assets */
+            --bg-img: url('https://i.postimg.cc/FzDxjZ7v/DDLC_BG.png');
+            --side-menu-img: url('https://i.postimg.cc/VLTGkhP1/Side-Menu.png');
+            --circle-img: url('https://i.postimg.cc/qBbnxg1B/DDLC-Circle.png');
+            --textbox-img: url('https://i.postimg.cc/TYfctXjB/Textbox.png');
+            --namebox-img: url('https://i.postimg.cc/L62VxMkw/Namebox.png');
+
+            /* Core UI Colors */
+            --stage-bg: #ffffff;
+            --text-color: #4a4a4a;
+            --text-shadow-color: white;
+            --modal-bg: #ffffff;
+            --modal-text: #555555;
+            --modal-border: #ffbde1;
+            --menu-hover-bg: #ffe4f1;
+        }
+
+        /* Dark Theme */
+        .dark-theme {
+            --pink-bg: #4a1d35;
+            --pink-accent: #ff7bc1;
+            --shadow: rgba(0, 0, 0, 0.4);
+
+            /* Assets */
+            --bg-img: url('https://i.postimg.cc/tRc1BsZY/DDLC-BG-d.png');
+            --side-menu-img: url('https://i.postimg.cc/nLNY83Mb/Side-Menu-d.png');
+            --circle-img: url('https://i.postimg.cc/YqkcK3mn/DDLC-Circle-d.png');
+            --textbox-img: url('https://i.postimg.cc/T1gtNZ9M/Textbox-d.png');
+            --namebox-img: url('https://i.postimg.cc/PJYSVBM0/Namebox-d.png');
+
+            /* Core UI Colors */
+            --stage-bg: #1a0e16;
+            --text-color: #f7e6f0;
+            --text-shadow-color: #2b1120;
+            --modal-bg: #281622;
+            --modal-text: #f0d5e5;
+            --modal-border: #4a1d35;
+            --menu-hover-bg: #3d172c;
+        }
+
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #111;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: var(--font-main);
+            transition: background-color 0.3s ease;
+        }
+
+        /* 16:9 Aspect Ratio Stage Container */
+        .stage {
+            position: relative;
+            width: calc(var(--game-width) * 1px);
+            height: calc(var(--game-height) * 1px);
+            background-color: var(--stage-bg);
+            overflow: hidden;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8);
+            flex-shrink: 0;
+            transition: background-color 0.3s ease;
+        }
+
+        /* Animated Polka Dot Background */
+        .game-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: var(--bg-img);
+            background-repeat: repeat;
+            background-size: 1000px;
+            animation: backgroundScroll 40s linear infinite;
+        }
+
+        @keyframes backgroundScroll {
+            from {
+                background-position: 0 0;
+            }
+
+            to {
+                background-position: 500px 500px;
+            }
+        }
+
+        /* Side Menu */
+        .menu-container {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            pointer-events: none;
+        }
+
+        .menu-background-asset {
+            position: absolute;
+            left: 0;
+            top: 0;
+            height: 100%;
+            width: 100%;
+            background-image: var(--side-menu-img);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            filter: drop-shadow(10px 0 15px rgba(0, 0, 0, 0.1));
+            z-index: -1;
+            transition: background-image 0.3s ease;
+        }
+
+        /* Circular Logo Frame */
+        .icon-circle {
+            position: absolute;
+            top: -10px;
+            left: 150px;
+            width: 250px;
+            height: 250px;
+            background-image: var(--circle-img);
+            background-size: contain;
+            background-repeat: no-repeat;
+            z-index: 101;
+            transition: background-image 0.3s ease;
+        }
+
+        .icon-content {
+            opacity: 0;
+        }
+
+        /* Menu Options */
+        .menu-content {
+            padding-left: 75px;
+            pointer-events: auto;
+            margin-top: 220px;
+        }
+
+        .menu-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-item {
+            font-size: 30px;
+            color: var(--pink-accent);
+            margin: 5px 0;
+            cursor: pointer;
+            transition: color 0.1s ease-in-out, transform 0.1s ease-in-out;
+            text-shadow: 2.5px 2.5px 0px var(--text-shadow-color);
+            display: inline-block;
+        }
+
+        .menu-item:hover {
+            color: #d13d8d;
+            transform: scale(1.1) translateX(15px);
+        }
+
+        .dark-theme .menu-item:hover {
+            color: #ff9ed5;
+        }
+
+        /* Character Layer */
+        .character-layer {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 10;
+        }
+
+        .char {
+            position: absolute;
+            bottom: -15px;
+            animation: float 5s ease-in-out infinite;
+            cursor: pointer;
+            pointer-events: auto;
+            transition: filter 0.2s;
+        }
+
+        .char img {
+            display: block;
+            filter: drop-shadow(8px 0 12px rgba(0, 0, 0, 0.15));
+            height: 100%;
+            width: auto;
+            transition: transform 0.2s ease-out;
+        }
+
+        .char:hover {
+            filter: brightness(1.05) drop-shadow(0 0 10px rgba(255, 112, 189, 0.5));
+        }
+
+        .char.jump img {
+            animation: characterJump 0.75s;
+        }
+
+        @keyframes characterJump {
+
+            0%,
+            100% {
+                transform: translateY(0);
+                animation-timing-function: ease-out;
+            }
+
+            25% {
+                transform: translateY(-50px);
+                animation-timing-function: ease-in;
+            }
+
+            50% {
+                transform: translateY(0);
+                animation-timing-function: ease-out;
+            }
+
+            75% {
+                transform: translateY(-50px);
+                animation-timing-function: ease-in;
+            }
+        }
+
+        /* Character Placement */
+        .char-rui {
+            top: 25%;
+            right: 60px;
+            height: 1000px;
+            z-index: 14;
+            animation-delay: 0s;
+        }
+
+        .char-akt {
+            top: 10%;
+            right: 300px;
+            height: 600px;
+            z-index: 12;
+            animation-delay: 1s;
+        }
+
+        .char-touya {
+            top: 6%;
+            right: 475px;
+            height: 600px;
+            z-index: 11;
+            animation-delay: 1.5s;
+        }
+
+        .char-tks {
+            top: 25%;
+            left: 125px;
+            height: 750px;
+            z-index: 13;
+            animation-delay: 0.5s;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(0.4deg);
+            }
+        }
+
+        /* Dialogue Box using css background variables */
+        .dialogue-box {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 960px;
+            height: 170px;
+            background-image: var(--textbox-img);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-color: transparent;
+            border: none;
+            padding: 35px 65px;
+            z-index: 200;
+            display: none;
+            animation: slideUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15);
+            transition: background-image 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateX(-50%) translateY(120px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateX(-50%) translateY(0);
+                opacity: 1;
+            }
+        }
+
+        /* Name box using css background variables */
+        .dialogue-name {
+            position: absolute;
+            top: -52px;
+            left: 45px;
+            width: 190px;
+            height: 52px;
+            background-image: var(--namebox-img);
+            background-size: 100% 100%;
+            background-repeat: no-repeat;
+            background-color: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 21px;
+            color: #ff70bd;
+            text-shadow: 1.5px 1.5px 0px var(--text-shadow-color);
+            font-weight: bold;
+            padding-bottom: 6px;
+            transition: background-image 0.3s ease;
+        }
+
+        .dialogue-text {
+            font-size: 20px;
+            color: var(--text-color);
+            line-height: 1.4;
+            min-height: 60px;
+            font-family: var(--font-main);
+            transition: color 0.3s ease;
+        }
+
+        .dialogue-close {
+            position: absolute;
+            right: 40px;
+            top: 25px;
+            font-size: 22px;
+            color: #ff70bd;
+            cursor: pointer;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .dialogue-close:hover {
+            color: #d13d8d;
+            transform: scale(1.15);
+        }
+
+        /* Interactive UI Modals */
+        .modal {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.55);
+            backdrop-filter: blur(4px);
+            z-index: 300;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background: var(--modal-bg);
+            border: 6px solid var(--modal-border);
+            width: 520px;
+            padding: 30px;
+            box-shadow: 0 15px 45px rgba(0, 0, 0, 0.5);
+            text-align: center;
+            transform: scale(0.85);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.25), background-color 0.3s, border-color 0.3s;
+        }
+
+        .modal.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-size: 28px;
+            color: var(--pink-accent);
+            margin-top: 0;
+            margin-bottom: 20px;
+            text-shadow: 1px 1px 0 var(--text-shadow-color);
+        }
+
+        .modal-body {
+            font-size: 18px;
+            color: var(--modal-text);
+            margin-bottom: 25px;
+            line-height: 1.6;
+            transition: color 0.3s;
+        }
+
+        .modal-btn {
+            background: var(--pink-accent);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 30px;
+            font-size: 18px;
+            font-family: var(--font-main);
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(255, 112, 189, 0.35);
+            transition: background 0.2s, transform 0.1s;
+        }
+
+        .modal-btn:hover {
+            background: #d13d8d;
+            transform: translateY(-2px);
+        }
+
+        .modal-btn:active {
+            transform: translateY(1px);
+        }
+
+        .settings-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 15px 0;
+            font-size: 18px;
+            color: var(--modal-text);
+            transition: color 0.3s;
+        }
+
+        /* Toggle Switches */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked+.slider {
+            background-color: var(--pink-accent);
+        }
+
+        input:checked+.slider:before {
+            transform: translateX(24px);
+        }
+
+        .range-slider {
+            width: 150px;
+            accent-color: var(--pink-accent);
+        }
+
+        /* Sparkle elements */
+        .star {
+            position: absolute;
+            font-size: 24px;
+            color: #fffb8f;
+            text-shadow: 0 0 5px rgba(255, 255, 255, 0.8);
+            pointer-events: none;
+            z-index: 15;
+            animation: starFade 1s forwards ease-out;
+        }
+
+        @keyframes starFade {
+            0% {
+                transform: scale(0.5) translateY(0) rotate(0deg);
+                opacity: 1;
+            }
+
+            100% {
+                transform: scale(1.5) translateY(-50px) rotate(45deg);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="stage" id="stage">
+
+        <div class="game-container" id="gameContainer">
+            <!-- Sidebar with Side-Menu asset -->
+            <div class="menu-container">
+                <div class="menu-background-asset"></div>
+
+                <div class="icon-circle">
+                    <div class="icon-content">
+                        <img src="https://i.postimg.cc/qBbnxg1B/DDLC-Circle.png" class="logo-img" alt="Logo">
+                    </div>
+                </div>
+
+                <div class="menu-content">
+                    <nav class="menu-list">
+                        <div class="menu-item" id="btnNewGame">New Game</div><br>
+                        <div class="menu-item" id="btnLoadGame">Load Game</div><br>
+                        <div class="menu-item" id="btnSettings">Settings</div><br>
+                        <div class="menu-item" id="btnHelp">Help</div><br>
+                        <div class="menu-item" id="btnQuit">Quit</div>
+                    </nav>
+                </div>
+            </div>
+
+            <!-- Characters Layer -->
+            <div class="character-layer">
+                <div class="char char-rui" data-name="Rui" data-dialogue="Oh? Could this code be part of an unexpected show? Well, then, let's make it extraordinary!"><img src="https://i.postimg.cc/vZQs8Hdr/Kamishiro_Rui.png" alt="Rui"></div>
+                <div class="char char-akt" data-name="Akito" data-dialogue="Oi! Don't just tap on me like that! ...But as long as you're here, let's practice, alright?"><img src="https://i.postimg.cc/3xKTrJHy/Shinonome_Akito.png" alt="Akito"></div>
+                <div class="char char-touya" data-name="Touya" data-dialogue="Ah, greetings. I was reading over the music sheets, but I appreciate you visiting us. Please make yourself at home."><img src="https://i.postimg.cc/sgVrfDR5/Aoyagi_Touya.png" alt="Touya"></div>
+                <div class="char char-tks" data-name="Tsukasa" data-dialogue="Hahaha! Welcome to our grand stage! I, Tenma Tsukasa, am the star destined to shine brightest in this club!"><img src="https://i.postimg.cc/cLsS14Nw/Tenma_Tsukasa.png" alt="Tsukasa"></div>
+            </div>
+
+            <!-- Custom Dialogue and Name Box overlays -->
+            <div class="dialogue-box" id="dialogueBox">
+                <span class="dialogue-close" id="dialogueClose">&times;</span>
+                <div class="dialogue-name" id="dialogueName">Tsukasa</div>
+                <div class="dialogue-text" id="dialogueText">"Hello there!"</div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+        <div class="modal" id="modalNewGame">
+            <div class="modal-content">
+                <h3 class="modal-title">New Game</h3>
+                <p class="modal-body">Would you like to step into the wonder-filled stage of Fantasista SQUAD? An unforgettable production with Tsukasa, Rui, Akito, and Touya awaits!</p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="modal-btn" onclick="startFauxGame()">Yes</button>
+                    <button class="modal-btn" style="background:#ccc;" onclick="closeModals()">No</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal" id="modalLoadGame">
+            <div class="modal-content">
+                <h3 class="modal-title">Load Game</h3>
+                <p class="modal-body" id="loadGameText">No saves found! Your story is just beginning. Let's start fresh!</p>
+                <button class="modal-btn" onclick="closeModals()">Okay</button>
+            </div>
+        </div>
+
+        <div class="modal" id="modalSettings">
+            <div class="modal-content">
+                <h3 class="modal-title">Settings</h3>
+
+                <div class="settings-row">
+                    <span>Background Scroll</span>
+                    <label class="switch">
+                        <input type="checkbox" id="scrollToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-row">
+                    <span>Scroll Speed</span>
+                    <input type="range" min="10" max="100" value="40" class="range-slider" id="scrollSpeed">
+                </div>
+
+                <div class="settings-row">
+                    <span>Show Sparkles</span>
+                    <label class="switch">
+                        <input type="checkbox" id="sparkleToggle" checked>
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <div class="settings-row">
+                    <span>Night Mode</span>
+                    <label class="switch">
+                        <input type="checkbox" id="themeToggle">
+                        <span class="slider"></span>
+                    </label>
+                </div>
+
+                <br>
+                <button class="modal-btn" onclick="closeModals()">Done</button>
+            </div>
+        </div>
+
+        <div class="modal" id="modalHelp">
+            <div class="modal-content" style="width: 550px;">
+                <h3 class="modal-title">Help</h3>
+                <p class="modal-body" style="text-align: left; font-size: 16px;">
+                    <strong>This is not a full-fledged game / mod.</strong><br>
+                    This is a mini project I made out of boredom. Whether or not I'll ever actually make this a mod is entirely up to how much motivation I have and how much time I have, as I most likely will take on the project solo.<br>
+                    This is made entirely using HTML, CSS, and JavaScript, so this is very clunky and jank compared to if I actually used Ren'py.<br>
+                    Thanks for checking this out! If you want to see more projects I've made, check out my <a href="https://asiandra.github.io/Vibrant-Twilight/">Vibrant Twilight</a> and <a href="https://asiandra.github.io/comfort-characters/">comfort characters</a> pages!<br>
+                    If you haven't already, try clicking each character on the main menu :)
+                </p>
+                <button class="modal-btn" onclick="closeModals()">Okay</button>
+            </div>
+        </div>
+
+        <div class="modal" id="modalQuit">
+            <div class="modal-content">
+                <h3 class="modal-title">Quit</h3>
+                <p class="modal-body">Are you sure you want to exit DDFS and return to the desktop?</p>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <button class="modal-btn" onclick="closeQuit()">Yes</button>
+                    <button class="modal-btn" style="background:#ccc;" onclick="closeModals()">No</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        const stage = document.getElementById('stage');
+        const gameContainer = document.getElementById('gameContainer');
+        const baseWidth = 1280;
+        const baseHeight = 720;
+
+        // Autoscale Stage to fit the browser viewport while preserving 16:9
+        function resizeStage() {
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            const scale = Math.min(winWidth / baseWidth, winHeight / baseHeight);
+            stage.style.transform = `scale(${scale})`;
+        }
+
+        window.addEventListener('resize', resizeStage);
+        resizeStage();
+
+        // Dialogue Box Elements
+        const dialogueBox = document.getElementById('dialogueBox');
+        const dialogueName = document.getElementById('dialogueName');
+        const dialogueText = document.getElementById('dialogueText');
+        const dialogueClose = document.getElementById('dialogueClose');
+
+        let typingTimer = null;
+
+        function typeWriter(text, i, callback) {
+            if (i < text.length) {
+                dialogueText.innerHTML = text.substring(0, i + 1);
+                typingTimer = setTimeout(() => {
+                    typeWriter(text, i + 1, callback);
+                }, 25);
+            } else if (callback) {
+                callback();
+            }
+        }
+
+        // Click interaction for Characters
+        const characters = document.querySelectorAll('.char');
+        characters.forEach(char => {
+            char.addEventListener('click', (e) => {
+                if (document.getElementById('sparkleToggle').checked) {
+                    createSparkle(e.clientX, e.clientY);
+                }
+
+                char.classList.add('jump');
+                setTimeout(() => {
+                    char.classList.remove('jump');
+                }, 450);
+
+                const name = char.getAttribute('data-name');
+                const quote = char.getAttribute('data-dialogue');
+
+                dialogueBox.style.display = 'block';
+                dialogueName.innerText = name;
+                dialogueText.innerHTML = "";
+
+                // Color-coordinate text colors to keep the custom Namebox background readable
+                if (name === 'Tsukasa') dialogueName.style.color = '#ffbb00';
+                if (name === 'Rui') dialogueName.style.color = '#bb88ee';
+                if (name === 'Akito') dialogueName.style.color = '#ff7722';
+                if (name === 'Touya') dialogueName.style.color = '#0077dd';
+
+                clearTimeout(typingTimer);
+                typeWriter(`"${quote}"`, 0);
+            });
+        });
+
+        dialogueClose.addEventListener('click', () => {
+            dialogueBox.style.display = 'none';
+        });
+
+        // Click sparkles calculation within transformed stage
+        function createSparkle(x, y) {
+            const rect = stage.getBoundingClientRect();
+            const winWidth = window.innerWidth;
+            const winHeight = window.innerHeight;
+            const scale = Math.min(winWidth / baseWidth, winHeight / baseHeight);
+
+            const stageX = (x - rect.left) / scale;
+            const stageY = (y - rect.top) / scale;
+
+            for (let i = 0; i < 5; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.innerHTML = '✨';
+                star.style.left = `${stageX + (Math.random() * 40 - 20)}px`;
+                star.style.top = `${stageY + (Math.random() * 40 - 20)}px`;
+                stage.appendChild(star);
+
+                setTimeout(() => {
+                    star.remove();
+                }, 1000);
+            }
+        }
+
+        // Modal View Controls
+        const modals = {
+            newGame: document.getElementById('modalNewGame'),
+            loadGame: document.getElementById('modalLoadGame'),
+            settings: document.getElementById('modalSettings'),
+            help: document.getElementById('modalHelp'),
+            quit: document.getElementById('modalQuit')
+        };
+
+        document.getElementById('btnNewGame').addEventListener('click', () => openModal('newGame'));
+        document.getElementById('btnLoadGame').addEventListener('click', () => {
+            const savedName = localStorage.getItem('squad_username');
+            const textElement = document.getElementById('loadGameText');
+            if (savedName) {
+                textElement.innerHTML = `Found save file! <br><br><strong>Player Name:</strong> ${savedName}<br><strong>Stage:</strong> Prologue Complete.<br><br>Let's continue!`;
+            } else {
+                textElement.innerHTML = `No save files found! Your story is just beginning. Let's start fresh!`;
+            }
+            openModal('loadGame');
+        });
+        document.getElementById('btnSettings').addEventListener('click', () => openModal('settings'));
+        document.getElementById('btnHelp').addEventListener('click', () => openModal('help'));
+        document.getElementById('btnQuit').addEventListener('click', () => openModal('quit'));
+
+        function openModal(key) {
+            closeModals();
+            modals[key].classList.add('active');
+        }
+
+        function closeModals() {
+            Object.values(modals).forEach(m => m.classList.remove('active'));
+        }
+
+        // Mock Playwright game trigger
+        function startFauxGame() {
+            const userName = prompt("Please enter your name, playwright:", "Kaveh");
+            if (userName) {
+                localStorage.setItem('squad_username', userName);
+                closeModals();
+                dialogueBox.style.display = 'block';
+                dialogueName.style.color = '#b325a3';
+                dialogueName.innerText = "SQUAD";
+                clearTimeout(typingTimer);
+                typeWriter(`"Welcome, ${userName}! The curtains are drawing open... Let's make this show a masterpiece!"`, 0);
+            } else {
+                closeModals();
+            }
+        }
+
+        function closeQuit() {
+            closeModals();
+            dialogueBox.style.display = 'block';
+            dialogueName.style.color = '#bb88ee';
+            dialogueName.innerText = "???";
+            clearTimeout(typingTimer);
+            typeWriter(`Just kidding! I wouldn't let you leave so easily now, would I?`, 0);
+        }
+
+        // Background Animation controls
+        const scrollToggle = document.getElementById('scrollToggle');
+        const scrollSpeed = document.getElementById('scrollSpeed');
+
+        scrollToggle.addEventListener('change', () => {
+            if (scrollToggle.checked) {
+                gameContainer.style.animationPlayState = 'running';
+            } else {
+                gameContainer.style.animationPlayState = 'paused';
+            }
+        });
+
+        scrollSpeed.addEventListener('input', () => {
+            const speed = 110 - scrollSpeed.value;
+            gameContainer.style.animationDuration = `${speed}s`;
+        });
+
+        // Theme Management Logic
+        const themeToggle = document.getElementById('themeToggle');
+
+        function setTheme(isDark) {
+            if (isDark) {
+                document.body.classList.add('dark-theme');
+                themeToggle.checked = true;
+                localStorage.setItem('squad_theme', 'dark');
+            } else {
+                document.body.classList.remove('dark-theme');
+                themeToggle.checked = false;
+                localStorage.setItem('squad_theme', 'light');
+            }
+        }
+
+        // Event listeners for toggle switches
+        themeToggle.addEventListener('change', () => {
+            setTheme(themeToggle.checked);
+        });
+
+        // Load saved theme preference
+        const savedTheme = localStorage.getItem('squad_theme');
+        if (savedTheme === 'dark') {
+            setTheme(true);
+        } else {
+            setTheme(false);
+        }
+
+        // Sound Effects
+        const hoverSfx = new Audio('https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/DDSF%20Hover.ogg');
+        const selectSfx = new Audio('https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/DDSF%20Select.ogg');
+
+        const unlockAudio = () => {
+            hoverSfx.play().then(() => {
+                hoverSfx.pause();
+                hoverSfx.currentTime = 0;
+            }).catch(() => {});
+
+            selectSfx.play().then(() => {
+                selectSfx.pause();
+                selectSfx.currentTime = 0;
+            }).catch(() => {});
+
+            window.removeEventListener('click', unlockAudio);
+            window.removeEventListener('touchstart', unlockAudio);
+        };
+        window.addEventListener('click', unlockAudio);
+        window.addEventListener('touchstart', unlockAudio);
+        
+        const interactiveElements = document.querySelectorAll('.menu-item, .modal-btn, .dialogue-close, .modal-content a');
+        interactiveElements.forEach(item => {
+            item.addEventListener('mouseenter', () => {
+                hoverSfx.currentTime = 0;
+                hoverSfx.play().catch(() => {});
+            });
+
+            item.addEventListener('click', () => {
+                selectSfx.currentTime = 0;
+                selectSfx.play().catch(() => {});
+                item.style.transform = "scale(0.95)";
+                setTimeout(() => item.style.transform = "", 100);
+            });
+        });
+    </script>
+</body>
+
+</html>
