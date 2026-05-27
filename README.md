@@ -1,2 +1,3 @@
-# dokidokifantasistasquad-menu
-Mini Project cause I'm bored
+# Doki Doki Fantasista SQUAD Menu
+Main menu screen with Fantasista SQUAD inspired by DDLC.<br>
+I am bored
