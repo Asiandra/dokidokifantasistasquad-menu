@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Doki Doki Fantasista SQUAD</title>
+    <link rel="icon" type="image/png" href="https://i.postimg.cc/bwdt5PFr/Fantasista-Icon.png">
     <style>
         @font-face {
             font-family: 'VerilySerifMono';
@@ -296,7 +297,7 @@
             }
         }
 
-        /* Dialogue Box using css background variables */
+        /* Dialogue Box */
         .dialogue-box {
             position: absolute;
             bottom: 20px;
@@ -328,7 +329,7 @@
             }
         }
 
-        /* Name box using css background variables */
+        /* Name box */
         .dialogue-name {
             position: absolute;
             top: -52px;
@@ -374,7 +375,7 @@
             transform: scale(1.15);
         }
 
-        /* Interactive UI Modals */
+        /* Interactive UI */
         .modal {
             position: absolute;
             top: 0;
@@ -511,7 +512,7 @@
             accent-color: var(--pink-accent);
         }
 
-        /* Sparkle elements */
+        /* Sparkles */
         .star {
             position: absolute;
             font-size: 24px;
@@ -541,7 +542,7 @@
     <div class="stage" id="stage">
 
         <div class="game-container" id="gameContainer">
-            <!-- Sidebar with Side-Menu asset -->
+            <!-- Sidebar -->
             <div class="menu-container">
                 <div class="menu-background-asset"></div>
 
@@ -710,7 +711,7 @@
                 char.classList.add('jump');
                 setTimeout(() => {
                     char.classList.remove('jump');
-                }, 450);
+                }, 750);
 
                 const name = char.getAttribute('data-name');
                 const quote = char.getAttribute('data-dialogue');
