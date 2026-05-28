@@ -800,10 +800,14 @@
                 localStorage.setItem('squad_username', userName);
                 closeModals();
                 dialogueBox.style.display = 'block';
-                dialogueName.style.color = '#b325a3';
+                dialogueName.style.color = '#ff70bd';
                 dialogueName.innerText = "SQUAD";
                 clearTimeout(typingTimer);
-                typeWriter(`"Welcome, ${userName}! The curtains are drawing open... Let's make this show a masterpiece!"`, 0);
+                typeWriter(`"Welcome, ${userName}! The curtains are drawing open... Let's make this show a masterpiece!"`, 0, () => {
+                    setTimeout(() => {
+                        window.location.href = "Stuff/poemgame.html";
+                    }, 1500);
+                });
             } else {
                 closeModals();
             }
