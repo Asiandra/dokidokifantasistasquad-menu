@@ -6,18 +6,18 @@
     <title>Doki Doki Fantasista Squad</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/bwdt5PFr/Fantasista-Icon.png">
     
-    <!-- Tailwind CSS CDN for styling -->
+    <!-- Tailwind CSS CDN for utility formatting -->
     <script src="https://cdn.tailwindcss.com"></script>
     
     <!-- React & ReactDOM Libraries -->
     <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
     
-    <!-- Babel standalone compiler for JSX translation -->
+    <!-- Babel standalone compiler for live JSX parsing -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* Loading font */
+        /* OMORI Game Font */
         @font-face {
             font-family: 'OMORI';
             src: url('https://raw.githubusercontent.com/Asiandra/dokidokifantasistasquad-menu/main/Stuff/OMORI_GAME2.ttf') format('truetype');
@@ -25,15 +25,63 @@
             font-style: normal;
         }
 
+        /* DDLC Dialogue Font */
+        @font-face {
+            font-family: 'DDLC';
+            src: url('https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/VerilySerifMono.otf') format('opentype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        /* Global style settings */
         body {
-            font-family: 'OMORI';
+            font-family: 'OMORI', sans-serif;
             margin: 0;
             padding: 0;
             overflow: hidden;
-            background-color: #2e1a05;
+            background-color: #1e120b;
         }
 
-        /* Desk */
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 5px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(100, 100, 100, 0.3);
+            border-radius: 4px;
+        }
+
+        .word-btn {
+            transition: all 0.15s ease-in-out;
+        }
+        .word-btn:hover {
+            color: #ce4a7e !important;
+            background-image: none !important;
+            -webkit-text-fill-color: #ce4a7e !important;
+            transform: scale(1.05);
+        }
+
+        /* Chibi bounce transition rules */
+        @keyframes doki-doki {
+            0%, 100% { transform: translateY(0); animation-timing-function: ease-out; }
+            50% { transform: translateY(-20px); animation-timing-function: ease-in; }
+        }
+
+        .he-like {
+            animation: doki-doki 0.3s 2;
+        }
+
+        /* General vector utility classes */
+        .font-omori {
+            font-family: 'OMORI', sans-serif !important;
+        }
+        .font-ddlc {
+            font-family: 'DDLC', serif !important;
+        }
+
+        /* Responsive scale layout element placement */
         .desk-bg {
             background-image: url('https://i.postimg.cc/0QFXjSx1/Desk-Texture.png');
             background-size: cover;
@@ -44,309 +92,466 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            transition: background-color 0.5s ease;
         }
 
-        /* Bounce */
-        @keyframes doki-doki {
-            0%, 100% { transform: translateY(0); animation-timing-function: ease-out; }
-            50% { transform: translateY(-20px); animation-timing-function: ease-in; }
+        /* Class override to turn desk completely black during VN/dialogue mode */
+        .desk-bg.vn-active {
+            background-image: none !important;
+            background-color: #000000 !important;
         }
 
-        .he-like {
-            animation: doki-doki 0.3s 2;
+        /* Decision Ribbon Hover Transitions */
+        .choice-ribbon {
+            background-color: #ffdbe9;
+            color: #1e293b;
+            transition: all 0.2s ease-in-out;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
         }
-
-        /* Float animations for titles and UI sparkles */
-        @keyframes floatSlow {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-6px) rotate(0.5deg); }
-        }
-
-        .float-slow {
-            animation: floatSlow 4s ease-in-out infinite;
-        }
-
-        /* Chosen words scrollbar */
-        .custom-scrollbar::-webkit-scrollbar {
-            width: 6px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255);
-            border: 1px solid #000;
+        .choice-ribbon:hover {
+            background-color: #ffffff;
+            color: #e0538a;
+            border-color: #ff9ebb;
+            box-shadow: 0 0 15px rgba(255, 158, 187, 0.6);
+            transform: scale(1.02);
         }
     </style>
 </head>
 <body>
     <div id="root"></div>
 
+    <!-- STREAMING_CHUNK: Setting up notebook configurations, assets, and route dialogues -->
     <script type="text/babel">
         const { useState, useEffect, useMemo, useRef } = React;
 
+        // Custom SVGs for volume toggles
         const SVG_VOLUME_ON = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
         );
         const SVG_VOLUME_OFF = () => (
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line></svg>
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="22" y1="9" x2="16" y2="15"></line><line x1="16" y1="9" x2="22" y2="15"></line></svg>
         );
 
-        // Randomized Bookmark Notebook Templates
-        const NOTEBOOK_BACKGROUNDS = [
-            "https://i.postimg.cc/Jhbd000Q/Notebook-Tsukasa.png",
-            "https://i.postimg.cc/g0vBjjj4/Notebook-Rui.png",
-            "https://i.postimg.cc/g0vBjjjq/Notebook-Akito.png",
-            "https://i.postimg.cc/3wgbNNNF/Notebook-Touya.png"
-        ];
+        // Preloaded Notebook variants matching the character bookmark colors
+        const NOTEBOOKS = {
+            tsukasa: "https://i.postimg.cc/Jhbd000Q/Notebook-Tsukasa.png",
+            rui: "https://i.postimg.cc/g0vBjjj4/Notebook-Rui.png",
+            akito: "https://i.postimg.cc/g0vBjjjq/Notebook-Akito.png",
+            touya: "https://i.postimg.cc/3wgbNNNF/Notebook-Touya.png"
+        };
 
-        // Safe alias backup variable to absolutely avoid "ReferenceError: NOTEBOOKS is not defined"
-        const NOTEBOOKS = NOTEBOOK_BACKGROUNDS;
+        const NOTEBOOK_ARRAY = Object.values(NOTEBOOKS);
 
+        // Word association configurations mapping word points to characters
         const WORD_POOL = [
-            { word: "Sunshine", tsukasa: 3, akito: 1, touya: 0, rui: 1 },
-            { word: "Promise", tsukasa: 3, akito: 1, touya: 1, rui: 1 },
-            { word: "Together", tsukasa: 3, akito: 0, touya: 0, rui: 2 },
-            { word: "Smile", tsukasa: 3, akito: 2, touya: 0, rui: 1 },
-            { word: "Star", tsukasa: 3, akito: 1, touya: 1, rui: 2 },
-            { word: "Theater", tsukasa: 3, akito: 1, touya: 1, rui: 2 },
-            { word: "Future", tsukasa: 3, akito: 1, touya: 1, rui: 1 },
-            { word: "Show", tsukasa: 3, akito: 2, touya: 0, rui: 2 },
-            { word: "Loud", tsukasa: 3, akito: 2, Low: 0, rui: 1 },
-            { word: "Warmth", tsukasa: 3, akito: 1, touya: 1, rui: 1 },
-            { word: "Family", tsukasa: 3, akito: 1, touya: 1, rui: 1 },
-            { word: "Cupcake", tsukasa: 1, akito: 3, touya: 0, rui: 1 },
-            { word: "Strawberry", tsukasa: 2, akito: 3, touya: 0, rui: 0 },
-            { word: "Pancake", tsukasa: 2, akito: 3, touya: 1, rui: 0 },
-            { word: "Street", tsukasa: 1, akito: 3, touya: 2, rui: 1 },
-            { word: "Bake", tsukasa: 1, akito: 3, touya: 0, rui: 1 },
-            { word: "Secret", tsukasa: 1, akito: 3, touya: 1, rui: 2 },
-            { word: "Beat", tsukasa: 1, akito: 3, touya: 2, rui: 1 },
-            { word: "Sparkle", tsukasa: 2, akito: 3, touya: 0, rui: 1 },
-            { word: "Dream", tsukasa: 2, akito: 3, touya: 1, rui: 1 },
-            { word: "Angry", tsukasa: 1, akito: 3, touya: 2, rui: 0 },
-            { word: "Spicy", tsukasa: 1, akito: 3, touya: 1, rui: 1 },
-            { word: "Melancholy", tsukasa: 1, akito: 0, touya: 3, rui: 2 },
-            { word: "Eternity", tsukasa: 1, akito: 0, touya: 3, rui: 2 },
-            { word: "Crimson", tsukasa: 0, akito: 1, touya: 3, rui: 1 },
-            { word: "Velvet", tsukasa: 1, akito: 1, touya: 3, rui: 1 },
-            { word: "Whisper", tsukasa: 2, akito: 1, touya: 3, rui: 1 },
-            { word: "Solitude", tsukasa: 1, akito: 0, touya: 3, rui: 2 },
-            { word: "Destiny", tsukasa: 2, akito: 0, touya: 3, rui: 2 },
-            { word: "Piano", tsukasa: 1, akito: 2, touya: 3, rui: 1 },
-            { word: "Coffee", tsukasa: 1, akito: 2, touya: 3, rui: 1 },
-            { word: "Quiet", tsukasa: 1, akito: 1, touya: 3, rui: 1 },
-            { word: "Library", tsukasa: 1, akito: 1, touya: 3, rui: 1 },
-            { word: "Reality", tsukasa: 1, akito: 1, touya: 1, rui: 3 },
-            { word: "Canvas", tsukasa: 1, akito: 1, touya: 1, rui: 3 },
-            { word: "Symphony", tsukasa: 1, akito: 1, touya: 2, rui: 3 },
-            { word: "Ink", tsukasa: 1, akito: 1, touya: 2, rui: 3 },
-            { word: "Mirror", tsukasa: 1, akito: 0, touya: 2, rui: 3 },
-            { word: "Horizon", tsukasa: 2, akito: 0, touya: 1, rui: 3 },
-            { word: "Perspective", tsukasa: 0, akito: 0, touya: 2, rui: 3 },
-            { word: "Control", tsukasa: 1, akito: 1, touya: 1, rui: 3 },
-            { word: "Ephemeral", tsukasa: 1, akito: 0, touya: 3, rui: 3 },
-            { word: "Glitch", tsukasa: 0, akito: 0, touya: 1, rui: 3 },
-            { word: "Infinite", tsukasa: 1, akito: 1, touya: 2, rui: 3 }
+            // Tsukasa Words
+            { word: "Confident", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Family", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Loud", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Luncheon", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Nostalgia", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Pegasus", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Prince", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Promise", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Protagonist", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Sky", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Star", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Warmth", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            { word: "Wellbeing", tsukasa: 1, rui: 0, akito: 0, touya: 0 },
+            // Rui Words
+            { word: "Act", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Bellflower", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Candy", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Category", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Danger", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Dessert", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Diety", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Director", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Engineering", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Era", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Mad", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Mechanical", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Ostracize", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Sorcerer", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Symphony", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Tease", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            { word: "Trouble", tsukasa: 0, rui: 1, akito: 0, touya: 0 },
+            // Akito Words
+            { word: "Arrogant", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Beat", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Cheesecake", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Coral", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Criticize", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Dawn", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Easygoing", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Facade", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Failure", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Fuel", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Guard", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Pancake", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Passionate", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Regret", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Surpass", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Static", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            { word: "Truth", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
+            // Touya Words
+            { word: "Agonizing", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Antagonist", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Cookie", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Coffee", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Death", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Epiphany", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Eternity", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Grudge", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Kickstart", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Knight", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Melancholy", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Pure", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Quiet", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Royal", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Seasons", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Stoic", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Whisper", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Willow", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            { word: "Winter", tsukasa: 0, rui: 0, akito: 0, touya: 1 },
+            // Ruikasa Words
+            { word: "Eccentric", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Fellow", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Musical", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Phenny", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Showtime", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Smile", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Theatre", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            { word: "Weird", tsukasa: 1, rui: 1, akito: 0, touya: 0 },
+            // Akikasa Words
+            { word: "Itch", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Persona", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Plebeian", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Range", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Red Hare", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Sunflower", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Together", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Sun", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            { word: "Tease", tsukasa: 1, rui: 0, akito: 1, touya: 0 },
+            // Toyakasa Words
+            { word: "Chapter", tsukasa: 1, rui: 0, akito: 0, touya: 1 },
+            { word: "Discipline", tsukasa: 1, rui: 0, akito: 0, touya: 1 },
+            { word: "Piano", tsukasa: 1, rui: 0, akito: 0, touya: 1 },
+            // Akirui Words
+            { word: "Reality", tsukasa: 0, rui: 1, akito: 1, touya: 0 },
+            // Ruitoya Words
+            { word: "Genius", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
+            { word: "Honest", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
+            { word: "Library", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
+            { word: "Moon", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
+            { word: "React", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
+            // Akitoya Words
+            { word: "Partner", tsukasa: 0, rui: 0, akito: 1, touya: 1 },
+            { word: "Street", tsukasa: 0, rui: 0, akito: 1, touya: 1 },
+            // Fantasista Ya
+            { word: "Stage", tsukasa: 1, rui: 1, akito: 1, touya: 0 },
+            { word: "Performance", tsukasa: 1, rui: 1, akito: 1, touya: 0 },
+            { word: "Future", tsukasa: 1, rui: 0, akito: 1, touya: 1 },
+            { word: "Dream", tsukasa: 1, rui: 1, akito: 1, touya: 1 },
+            { word: "Gay", tsukasa: 1, rui: 1, akito: 1, touya: 1 },
+            { word: "Music", tsukasa: 1, rui: 1, akito: 1, touya: 1 }
         ];
 
+        // Character Sprite Configuration for Dating Sim View
         const CHARACTERS = {
             tsukasa: {
                 id: "tsukasa",
                 name: "Tsukasa",
-                title: "The Star of the Stage",
-                color: "#f59e0b",
+                fullName: "Tenma Tsukasa",
+                color: "#ffbb00",
                 idleUrl: "https://i.ibb.co/0VCKWN89/Tsukasa-Idle.gif",
                 laughUrl: "https://i.postimg.cc/2yr9KnkB/Tsukasa-Laugh.png",
+                endUrl: "https://i.postimg.cc/65Xtdnz5/End-Tsukasa.png",
+                sprites: {
+                    talk: "https://i.postimg.cc/1tbWSRgC/Tsukasa-Talk.png",
+                    think: "https://i.postimg.cc/mDKd4ZcV/Tsukasa-Think-Talk.png",
+                    laugh: "https://i.postimg.cc/4dj8G4K2/Tsukasa-Laugh.png",
+                    proud: "https://i.postimg.cc/BbDmnWDz/Tsukasa-Proud.png",
+                    surprise: "https://i.postimg.cc/4ytWxCtM/Tsukasa-Surprise.png",
+                    flustered: "https://i.postimg.cc/Y9TX724d/Tsukasa-Flustered.png"
+                },
                 dialogues: [
-                    { text: "Aha! Are you finished with your masterpiece? Let me gaze upon your poetry!", expression: "neutral" },
-                    { text: "Mwahaha! Look at these words! 'Star', 'Theater', 'Smile'... This poem practically shines!", expression: "happy" },
-                    { text: "Your verses have the dazzling energy needed to capture an audience's heart!", expression: "happy" },
-                    { text: "Tell me, were you hoping to stand on stage beside me when you wrote this?", expression: "blush" },
-                    {
-                        type: "choice",
-                        options: [
-                            { text: "Yes! Let's make the crowd cheer together.", scoreMod: 10, nextIndex: 5 },
-                            { text: "I just wanted to make sure your bright star shines brightest.", scoreMod: 5, nextIndex: 6 }
-                        ]
+                    { text: "Aha! Are you finished with your masterpiece? Let me gaze upon your poetry!", expression: "talk" },
+                    { text: "Ohoho! Look at these words! This poem practically shines as bright as I do!", expression: "proud" },
+                    { text: "Your verses have the dazzling energy needed to capture an audience's heart!", expression: "laugh" },
+                    { text: "Tell me, were you hoping to stand on stage beside me when you wrote this?", expression: "think" }
+                ],
+                choices: [
+                    { 
+                        text: "Yes! Let's perform together.", 
+                        fullResponse: "Yes! I want to perform on stage with you and make the crowd cheer!", 
+                        scoreMod: 5,
+                        reply: "An excellent answer! We shall deliver a performance that will go down in history! Keep practicing your writing, partner!",
+                        replyExpression: "proud"
                     },
-                    { text: "An excellent answer! We shall deliver a performance that will go down in history! Keep practicing your writing, partner!", expression: "happy" },
-                    { text: "A spectacular sentiment! With your support, there is absolutely no limit to how far our stage show will reach!", expression: "neutral" }
+                    { 
+                        text: "I want you to shine.", 
+                        fullResponse: "I wanted to make sure your dazzling star shines the brightest of all.", 
+                        scoreMod: 10,
+                        reply: "A-ah! A spectacular sentiment! With your support, there is no limit as to how far our shows will reach!",
+                        replyExpression: "flustered"
+                    }
                 ]
             },
             rui: {
                 id: "rui",
                 name: "Rui",
-                title: "The Creative Inventive Director",
-                color: "#8b5cf6",
+                fullName: "Kamishiro Rui",
+                color: "#bb88ee",
                 idleUrl: "https://i.ibb.co/BKPvcxNg/Rui-Idle.gif",
                 laughUrl: "https://i.postimg.cc/NFBCzRsH/Rui-Laugh.png",
+                endUrl: "https://i.postimg.cc/FsVmGznH/End-Rui.png",
+                sprites: {
+                    talk: "https://i.postimg.cc/kg7Tqp5x/Rui-Talk.png",
+                    talk2: "https://i.postimg.cc/t49BpMgW/Rui-Talk-2.png",
+                    happy: "https://i.postimg.cc/rwqfMPpG/Rui-Happy.png",
+                    happy2: "https://i.postimg.cc/Mpz9qFG1/Rui-Happy-2.png"
+                },
                 dialogues: [
-                    { text: "Fufu, showtime! Let's see what interesting chemistry you've put onto the paper.", expression: "neutral" },
-                    { text: "Oh, intriguing! 'Glitch', 'Canvas', and 'Infinite'... what a wonderfully complex mind you have.", expression: "happy" },
-                    { text: "This vocabulary opens up so many possibilities for creative stage effects. Truly marvelous!", expression: "surprised" },
-                    { text: "Do you enjoy experimenting with your words as much as I enjoy building new inventions?", expression: "neutral" },
-                    {
-                        type: "choice",
-                        options: [
-                            { text: "Definitely! Crafting ideas with you is always an adventure.", scoreMod: 10, nextIndex: 5 },
-                            { text: "I like seeing what kind of unexpected combinations we can find.", scoreMod: 5, nextIndex: 6 }
-                        ]
+                    { text: "Fufu~ It's showtime! Let's see what interesting chemistry you've put onto the paper.", expression: "talk" },
+                    { text: "Oh, how intriguing! What a wonderfully complex mind you have.", expression: "happy" },
+                    { text: "This vocabulary opens up so many possibilities for creative stage effects. Truly marvelous!", expression: "talk" },
+                    { text: "Do you enjoy experimenting with your words as much as I enjoy building new inventions?", expression: "talk2" }
+                ],
+                choices: [
+                    { 
+                        text: "I like finding combinations.", 
+                        fullResponse: "I like seeing what kind of unexpected, beautiful combinations we can find together.", 
+                        scoreMod: 5,
+                        reply: "Exactly! The beauty lies in the unexpected. This poem is proof of your wonderful spark.",
+                        replyExpression: "happy"
                     },
-                    { text: "Wonderful! We make quite the inventive team, don't we? Let's design another brilliant show together soon.", expression: "happy" },
-                    { text: "Exactly! The beauty lies in the unexpected. This poem is proof of your wonderful spark.", expression: "neutral" }
+                    { 
+                        text: "Crafting with you is an adventure.", 
+                        fullResponse: "Of course! Crafting ideas with you is always an adventure.", 
+                        scoreMod: 10,
+                        reply: "Really? It's difficult to find someone who appreciates my ideas as much as you do. Let's design another brilliant show together soon.",
+                        replyExpression: "happy2"
+                    }
                 ]
             },
             akito: {
                 id: "akito",
                 name: "Akito",
-                title: "The Intense Street Performer",
-                color: "#f97316",
+                fullName: "Shinonome Akito",
+                color: "#ff7722",
                 idleUrl: "https://i.ibb.co/ZpFVXf9D/Akito-Idle.gif",
                 laughUrl: "https://i.postimg.cc/d3wNxGsZ/Akito-Laugh.png",
+                endUrl: "https://i.postimg.cc/3JF79Nb7/End-Akito.png",
+                sprites: {
+                    talk: "https://i.postimg.cc/0QKfVgtg/Akito-Talk.png",
+                    think: "https://i.postimg.cc/k5psNMyg/Akito-Think.png",
+                    curious: "https://i.postimg.cc/XvzLKNg7/Akito-Curious.png",
+                    shy: "https://i.postimg.cc/C1nNcyvp/Akito-Shy.png"
+                },
                 dialogues: [
-                    { text: "Hey. You're done with the poem already? Hand it over, let me check it out.", expression: "neutral" },
-                    { text: "Wait... 'Strawberry' and 'Pancake'? Are you trying to hint at something...?", expression: "surprised" },
-                    { text: "Still, the rhythm in this is actually solid. You've got a great sense of beat.", expression: "happy" },
-                    { text: "Were you thinking about our rehearsals when you put these words together?", expression: "neutral" },
-                    {
-                        type: "choice",
-                        options: [
-                            { text: "I wanted to write something that matches your drive.", scoreMod: 10, nextIndex: 5 },
-                            { text: "I just thought it would make you smile.", scoreMod: 5, nextIndex: 6 }
-                        ]
+                    { text: "Oi. You're done with the poem already? Hand it over, let me check it out.", expression: "talk" },
+                    { text: "...Are you trying to hint at something...?", expression: "curious" },
+                    { text: "Still, the rhythm in this is actually solid. You've got a great sense of beat.", expression: "think" },
+                    { text: "Were you thinking about our rehearsals when you put these words together?", expression: "curious" }
+                ],
+                choices: [
+                    { 
+                        text: "It matches you.", 
+                        fullResponse: "I wanted to write something powerful that matches your drive.", 
+                        scoreMod: 5,
+                        reply: "Huh... well, you definitely nailed it. But don't go slacking off now. We have a lot more to practice if we want to make it to the top.",
+                        replyExpression: "think"
                     },
-                    { text: "Huh... well, you definitely nailed it. Don't go slacking off now, we have a lot of practice ahead of us!", expression: "blush" },
-                    { text: "Tch, you say some embarrassing things so easily. But... thanks. Let's work hard again tomorrow.", expression: "happy" }
+                    { 
+                        text: "I wanted to make you smile.", 
+                        fullResponse: "I just thought writing a poem like this would make you smile.", 
+                        scoreMod: 10,
+                        reply: "Tch, don't say something so embarassing. But... thanks. Let's work hard again tomorrow.",
+                        replyExpression: "shy"
+                    }
                 ]
             },
             touya: {
                 id: "touya",
                 name: "Touya",
-                title: "The Calm Classical Performer",
-                color: "#3b82f6",
+                fullName: "Aoyagi Toya",
+                color: "#0077dd",
                 idleUrl: "https://i.ibb.co/xt1GL4Rz/Touya-Idle.gif",
                 laughUrl: "https://i.postimg.cc/KjxpHtGT/Touya-Laugh.png",
+                endUrl: "https://i.postimg.cc/YqHM1Y8C/End-Touya.png",
+                sprites: {
+                    talk: "https://i.postimg.cc/3rp1pT4X/Touya-Talk.png",
+                    closedeyes: "https://i.postimg.cc/ZnrLh8zW/Touya-Closed-Eyes.png",
+                    happy: "https://i.postimg.cc/HW5z5gc0/Touya-Happy.png",
+                    soft: "https://i.postimg.cc/MZR5RSMy/Touya-Soft.png"
+                },
                 dialogues: [
-                    { text: "Excuse me... is your poem complete? If you do not mind, I would like to read it.", expression: "neutral" },
-                    { text: "Ah... this is wonderful. Words like 'Piano', 'Velvet', and 'Quiet' create a peaceful melody.", expression: "surprised" },
-                    { text: "It reads like a gentle song playing in a quiet library. It is very calming.", expression: "happy" },
-                    { text: "I wonder... does writing poetry bring you the same peace that playing music brings me?", expression: "neutral" },
-                    {
-                        type: "choice",
-                        options: [
-                            { text: "Yes, especially when I write with you in mind.", scoreMod: 10, nextIndex: 5 },
-                            { text: "I find comfort in the quiet focus of finding the right words.", scoreMod: 5, nextIndex: 6 }
-                        ]
+                    { text: "Excuse me... is your poem complete? If you don't mind, I'd like to read it.", expression: "talk" },
+                    { text: "Ah... this is wonderful. These words really create a peaceful melody.", expression: "happy" },
+                    { text: "It reads like a gentle song playing in a quiet library. It is very calming.", expression: "closedeyes" },
+                    { text: "I wonder... does writing poetry bring you the same peace that playing music brings me?", expression: "happy" }
+                ],
+                choices: [
+                    { 
+                        text: "I find comfort in quiet.", 
+                        fullResponse: "I do. I find a lot of comfort in the quiet focus of finding the right words.", 
+                        scoreMod: 5,
+                        reply: "I understand that feeling. The process of composing is very similar. Thank you for sharing this peace with me.",
+                        replyExpression: "happy"
                     },
-                    { text: "I see... That makes me incredibly happy to hear. I look forward to reading whatever you write next.", expression: "blush" },
-                    { text: "I understand that feeling. The process of composing is very similar. Thank you for sharing this peace with me.", expression: "happy" }
+                    { 
+                        text: "Yes, with you in mind.", 
+                        fullResponse: "Yes, I feel that peace, especially when I write with you in mind.", 
+                        scoreMod: 10,
+                        reply: "I see... That makes me incredibly happy to hear. I look forward to reading whatever you write next.",
+                        replyExpression: "soft"
+                    }
                 ]
             }
         };
 
-        // Chibi Order
         const CHARACTER_ORDER = ['tsukasa', 'rui', 'akito', 'touya'];
 
+        // STREAMING_CHUNK: Setting up the React component hooks, volume controls, and sound triggers
         function App() {
             const [gameState, setGameState] = useState('PLAYING'); 
             const [selectedWords, setSelectedWords] = useState([]);
             const [scores, setScores] = useState({ tsukasa: 0, akito: 0, touya: 0, rui: 0 });
             const [hints, setHints] = useState(false);
-            const [notebookBg, setNotebookBg] = useState(() => NOTEBOOKS[Math.floor(Math.random() * NOTEBOOKS.length)]);
+            const [notebookBg, setNotebookBg] = useState(() => NOTEBOOKS.tsukasa);
             const [currentWordOptions, setCurrentWordOptions] = useState([]);
+            const [penHover, setPenHover] = useState(false);
+            const [buttonHover, setButtonHover] = useState(false);
             
-            // Dialogue Visual Novel States
+            // Dialogue Queue system
             const [winningCharId, setWinningCharId] = useState('tsukasa');
-            const [dialogueStep, setDialogueStep] = useState(0);
+            const [dialogueQueue, setDialogueQueue] = useState([]);
+            const [dialogueIndex, setDialogueIndex] = useState(0);
             const [typingText, setTypingText] = useState("");
             const [reactionStates, setReactionStates] = useState({ tsukasa: false, rui: false, akito: false, touya: false });
             const [soundEnabled, setSoundEnabled] = useState(false);
-            const [penHover, setPenHover] = useState(false);
+            const [isChoiceActive, setIsChoiceActive] = useState(false);
             
-            // Vector Scaling state to lock aspect ratio perfectly on resize
+            // Fade-to-black Transition Overlays
+            const [fadeProgress, setFadeProgress] = useState('none'); // 'none', 'out', 'black', 'in'
+            
+            // Scaler logic to fit screens
             const [scale, setScale] = useState(1);
 
             const selectSfxRef = useRef(null);
             const bgmRef = useRef(null);
             const typingTimer = useRef(null);
 
-            // Calculate precise scaling on viewport update to keep aspect-ratio locked
+            // Vector resolution scaler locks game canvas inside 1100 x 618 box
             useEffect(() => {
                 const handleResize = () => {
                     const targetWidth = 1100;
                     const targetHeight = 618;
                     const scaleX = window.innerWidth / targetWidth;
                     const scaleY = window.innerHeight / targetHeight;
-                    // Cap scale slightly to avoid extreme upscaling, but always fit viewport
-                    const finalScale = Math.min(scaleX, scaleY, 1.25);
+                    const finalScale = Math.min(scaleX, scaleY, 1.2);
                     setScale(finalScale);
                 };
                 window.addEventListener('resize', handleResize);
-                handleResize(); // Execute once on start
+                handleResize();
                 return () => window.removeEventListener('resize', handleResize);
             }, []);
 
-            // Populate initial words
+            // STREAMING_CHUNK: Defining the word balancer to ensure even character choice distributions
+            const generateNewWordOptions = () => {
+                const tsukasaWords = WORD_POOL.filter(w => w.tsukasa > 0);
+                const ruiWords = WORD_POOL.filter(w => w.rui > 0);
+                const akitoWords = WORD_POOL.filter(w => w.akito > 0);
+                const touyaWords = WORD_POOL.filter(w => w.touya > 0);
+
+                const selected = [];
+                
+                const pushUniqueFrom = (arr) => {
+                    const available = arr.filter(w => !selected.some(s => s.word === w.word));
+                    if (available.length > 0) {
+                        const chosen = available[Math.floor(Math.random() * available.length)];
+                        selected.push(chosen);
+                    }
+                };
+
+                // Guarantee at least one choice exists for each person on the notebook page
+                pushUniqueFrom(tsukasaWords);
+                pushUniqueFrom(ruiWords);
+                pushUniqueFrom(akitoWords);
+                pushUniqueFrom(touyaWords);
+
+                // Fill remaining up to 10 choices dynamically
+                while (selected.length < 10) {
+                    const available = WORD_POOL.filter(w => !selected.some(s => s.word === w.word));
+                    if (available.length === 0) break;
+                    const chosen = available[Math.floor(Math.random() * available.length)];
+                    selected.push(chosen);
+                }
+
+                // Shuffle selections
+                setCurrentWordOptions(selected.sort(() => 0.5 - Math.random()));
+            };
+
             useEffect(() => {
                 generateNewWordOptions();
             }, []);
 
-            // Handle background soundtrack play-pause state and handle browser blocking
+            // Handle background soundtrack play-pause state safely
             useEffect(() => {
                 if (bgmRef.current) {
                     if (soundEnabled) {
-                        bgmRef.current.play().catch(err => console.log("Audio play blocked, waiting for user interaction:", err));
+                        bgmRef.current.play().catch(err => console.log("Audio load waiting for click context:", err));
                     } else {
                         bgmRef.current.pause();
                     }
                 }
             }, [soundEnabled]);
 
-            // Clean up timers on unmount
             useEffect(() => {
                 return () => {
                     if (typingTimer.current) clearInterval(typingTimer.current);
                 };
             }, []);
 
-            const generateNewWordOptions = () => {
-                const shuffled = [...WORD_POOL].sort(() => 0.5 - Math.random());
-                setCurrentWordOptions(shuffled.slice(0, 10));
+            const playSelectSound = () => {
+                if (selectSfxRef.current) {
+                    selectSfxRef.current.currentTime = 0;
+                    selectSfxRef.current.play().catch(e => console.log("Select audio blocked:", e));
+                }
             };
 
+            // STREAMING_CHUNK: Handling word selection logic and double chibi bouncy jump assignments
             const handleWordClick = (wordObj) => {
                 if (selectedWords.length >= 20) return;
 
-                // Attempt to activate audio system on first word click if not already playing (handles Chrome autoplay guard)
+                // Auto-trigger sound player on first word selection if user hasn't explicitly muted
                 if (!soundEnabled && bgmRef.current) {
                     setSoundEnabled(true);
                 }
 
-                // Play the select sound effect
-                if (selectSfxRef.current) {
-                    selectSfxRef.current.currentTime = 0;
-                    selectSfxRef.current.play().catch(e => console.log("Sound effect blocked:", e));
+                playSelectSound();
+
+                // Determine favorite character for jump response
+                const values = { tsukasa: wordObj.tsukasa, rui: wordObj.rui, akito: wordObj.akito, touya: wordObj.touya };
+                const maxPoints = Math.max(...Object.values(values));
+                
+                // Collect candidates sharing the highest points (must be greater than 0)
+                const candidates = Object.keys(values).filter(key => values[key] === maxPoints && maxPoints > 0);
+                
+                let favorite = 'tsukasa';
+                if (candidates.length > 0) {
+                    // Randomly select one candidate from the tied winners to jump!
+                    favorite = candidates[Math.floor(Math.random() * candidates.length)];
                 }
 
-                // Determine character for double-bounce trigger
-                const values = { tsukasa: wordObj.tsukasa, rui: wordObj.rui, akito: wordObj.akito, touya: wordObj.touya };
-                let favorite = 'tsukasa';
-                let maxPoints = -1;
-                Object.keys(values).forEach(charKey => {
-                    if (values[charKey] > maxPoints) {
-                        maxPoints = values[charKey];
-                        favorite = charKey;
-                    }
-                });
-
-                // Trigger double bounce state
+                // Double bounce reaction
                 setReactionStates(prev => ({ ...prev, [favorite]: true }));
                 setTimeout(() => {
                     setReactionStates(prev => ({ ...prev, [favorite]: false }));
-                }, 600); // Duration for double jump (0.3s * 2)
+                }, 600);
 
-                // Route scores
+                // Add points
                 setScores(prev => ({
                     tsukasa: prev.tsukasa + wordObj.tsukasa,
                     rui: prev.rui + wordObj.rui,
@@ -360,7 +565,7 @@
                 if (nextSelected.length < 20) {
                     generateNewWordOptions();
                 } else {
-                    // Complete poem, find winning character
+                    // Trigger fade-to-black directly to visual novel
                     setTimeout(() => {
                         let finalWinner = 'tsukasa';
                         let maxWinnerScore = -1;
@@ -379,32 +584,47 @@
                         });
 
                         setWinningCharId(finalWinner);
-                        setDialogueStep(0);
-                        setGameState('TRANSITION');
+                        
+                        // Construct direct linear dialogue queue
+                        const introSteps = CHARACTERS[finalWinner].dialogues.map(d => ({
+                            speaker: CHARACTERS[finalWinner].name,
+                            text: d.text,
+                            expression: d.expression
+                        }));
+
+                        setDialogueQueue(introSteps);
+                        setDialogueIndex(0);
+                        setIsChoiceActive(false);
+                        
+                        setFadeProgress('out');
+                        setTimeout(() => {
+                            setGameState('DIALOGUE');
+                            setFadeProgress('in');
+                            setTimeout(() => setFadeProgress('none'), 800);
+                        }, 800);
+
                     }, 700);
                 }
             };
 
-            const startDialoguePhase = () => {
-                if (selectSfxRef.current) {
-                    selectSfxRef.current.currentTime = 0;
-                    selectSfxRef.current.play().catch(e => console.log(e));
-                }
-                setGameState('DIALOGUE');
+            const handlePenToggleClick = () => {
+                playSelectSound();
+                setHints(!hints);
             };
 
-            const currentDialogue = useMemo(() => {
+            const currentStep = useMemo(() => {
                 if (gameState !== 'DIALOGUE') return null;
-                return CHARACTERS[winningCharId].dialogues[dialogueStep];
-            }, [gameState, winningCharId, dialogueStep]);
+                return dialogueQueue[dialogueIndex];
+            }, [gameState, dialogueQueue, dialogueIndex]);
 
+            // STREAMING_CHUNK: Processing standard typewriter styling output and text layouts
             useEffect(() => {
-                if (!currentDialogue || !currentDialogue.text) return;
+                if (!currentStep || isChoiceActive) return;
                 
                 let isMounted = true;
                 setTypingText("");
                 let index = 0;
-                const fullText = currentDialogue.text;
+                const fullText = currentStep.text;
 
                 if (typingTimer.current) clearInterval(typingTimer.current);
 
@@ -422,53 +642,117 @@
                     isMounted = false;
                     if (typingTimer.current) clearInterval(typingTimer.current);
                 };
-            }, [currentDialogue, dialogueStep]);
+            }, [currentStep, dialogueIndex, isChoiceActive]);
 
-            const handleDialogueNext = (forcedIndex = null) => {
-                if (selectSfxRef.current) {
-                    selectSfxRef.current.currentTime = 0;
-                    selectSfxRef.current.play().catch(e => console.log(e));
-                }
+            const handleDialogueNext = () => {
+                playSelectSound();
 
-                if (forcedIndex !== null) {
-                    setDialogueStep(forcedIndex);
-                    return;
-                }
+                if (isChoiceActive) return;
 
-                const currentText = currentDialogue?.text || "";
+                const currentText = currentStep?.text || "";
                 if (typingText.length < currentText.length) {
                     setTypingText(currentText);
                     if (typingTimer.current) clearInterval(typingTimer.current);
                     return;
                 }
 
-                const characterDialogues = CHARACTERS[winningCharId].dialogues;
-                if (dialogueStep + 1 < characterDialogues.length) {
-                    setDialogueStep(dialogueStep + 1);
+                if (dialogueIndex + 1 < dialogueQueue.length) {
+                    setDialogueIndex(dialogueIndex + 1);
                 } else {
-                    setGameState('ENDING');
+                    const hasChoices = CHARACTERS[winningCharId].choices && CHARACTERS[winningCharId].choices.length > 0;
+                    const choiceAlreadySelected = dialogueQueue.some(d => d.speaker === "You");
+
+                    if (hasChoices && !choiceAlreadySelected) {
+                        setIsChoiceActive(true);
+                    } else {
+                        // Fade to black transition directly to ending
+                        setFadeProgress('out');
+                        setTimeout(() => {
+                            setGameState('ENDING');
+                            setFadeProgress('in');
+                            setTimeout(() => setFadeProgress('none'), 800);
+                        }, 800);
+                    }
                 }
             };
 
             const handleChoiceSelect = (choice) => {
+                playSelectSound();
+                
                 setScores(prev => ({ ...prev, [winningCharId]: prev[winningCharId] + choice.scoreMod }));
-                handleDialogueNext(choice.nextIndex);
+                setIsChoiceActive(false);
+
+                // Append Player spoken line and Character reply dynamically to the flat queue
+                const updatedQueue = [
+                    ...dialogueQueue,
+                    {
+                        speaker: "You",
+                        text: choice.fullResponse,
+                        expression: "think"
+                    },
+                    {
+                        speaker: CHARACTERS[winningCharId].name,
+                        text: choice.reply,
+                        expression: choice.replyExpression
+                    }
+                ];
+
+                setDialogueQueue(updatedQueue);
+                // Advance dialogue step straight to the player response step
+                setDialogueIndex(dialogueQueue.length);
             };
 
             const handleRestart = () => {
-                if (selectSfxRef.current) {
-                    selectSfxRef.current.currentTime = 0;
-                    selectSfxRef.current.play().catch(e => console.log(e));
-                }
+                playSelectSound();
                 setSelectedWords([]);
                 setScores({ tsukasa: 0, akito: 0, touya: 0, rui: 0 });
-                setNotebookBg(NOTEBOOKS[Math.floor(Math.random() * NOTEBOOKS.length)]);
+                setNotebookBg(NOTEBOOKS[Math.floor(Math.random() * NOTEBOOK_ARRAY.length)] || NOTEBOOKS.tsukasa);
                 generateNewWordOptions();
-                setGameState('PLAYING');
+                
+                // Fade back into the playing state
+                setFadeProgress('out');
+                setTimeout(() => {
+                    setGameState('PLAYING');
+                    setFadeProgress('in');
+                    setTimeout(() => setFadeProgress('none'), 800);
+                }, 800);
             };
 
+            // STREAMING_CHUNK: Calculating CSS style properties and gradients for hint markers
+            const getWordStyle = (wordObj) => {
+                if (!hints) {
+                    return { color: '#27272a' };
+                }
+
+                const likedBy = [];
+                if (wordObj.tsukasa > 0) likedBy.push('#ffbb00');
+                if (wordObj.rui > 0) likedBy.push('#bb88ee');
+                if (wordObj.akito > 0) likedBy.push('#ff7722');
+                if (wordObj.touya > 0) likedBy.push('#0077dd');
+
+                if (likedBy.length === 0) {
+                    return { color: '#27272a' };
+                } else if (likedBy.length === 1) {
+                    return { color: likedBy[0], fontWeight: 'bold' };
+                } else {
+                    // Multi-character text gradients using specified image colors
+                    const gradientString = `linear-gradient(135deg, ${likedBy.join(', ')})`;
+                    return {
+                        backgroundImage: gradientString,
+                        WebkitBackgroundClip: 'text',
+                        WebkitTextFillColor: 'transparent',
+                        MozBackgroundClip: 'text',
+                        MozTextFillColor: 'transparent',
+                        fontWeight: 'bold',
+                        display: 'inline-block'
+                    };
+                }
+            };
+
+            // STREAMING_CHUNK: Rendering the layout templates and wrapping them inside scalable bounds
             return (
-                <div className="desk-bg">
+                <div className={`desk-bg ${gameState === 'DIALOGUE' ? 'vn-active' : ''}`}>
+                    {/* Audio elements */}
                     <audio 
                         ref={selectSfxRef} 
                         src="https://raw.githubusercontent.com/Asiandra/comfort-characters/main/MISC/DDSF%20Select.ogg" 
@@ -481,64 +765,77 @@
                         loop 
                     />
 
+                    {/* Cinematic Fade Transition overlay */}
+                    <div 
+                        className="fixed inset-0 bg-black z-[999] pointer-events-none transition-opacity duration-700"
+                        style={{
+                            opacity: (fadeProgress === 'out' || fadeProgress === 'black') ? 1 : 0,
+                            visibility: fadeProgress === 'none' ? 'hidden' : 'visible'
+                        }}
+                    />
+
+                    {/* Scale Layout Centering Box */}
                     <div 
                         style={{
-                            width: '1080px',
-                            height: '720px',
+                            width: '1100px',
+                            height: '618px',
                             transform: `scale(${scale})`,
                             transformOrigin: 'center center',
                             position: 'relative',
                             flexShrink: 0
                         }}
-                        className="select-none flex items-center justify-center"
+                        className="select-none flex items-center justify-center overflow-hidden"
                     >
                         
-                        {/* Audio Toggle*/}
-                        <button 
-                            onClick={() => setSoundEnabled(!soundEnabled)}
-                            className="absolute bottom-4 right-4 z-50 bg-white/95 p-3 rounded-full hover:scale-110 active:scale-95 transition-all shadow-lg text-rose-500 flex items-center justify-center border-2 border-rose-100"
-                            title={soundEnabled ? "Mute Music" : "Play Music"}
-                        >
-                            {soundEnabled ? <SVG_VOLUME_ON /> : <SVG_VOLUME_OFF />}
-                        </button>
+                        {/* Audio Toggle sitting off-notebook on the wood desk */}
+                        {gameState !== 'DIALOGUE' && (
+                            <button 
+                                onClick={() => { playSelectSound(); setSoundEnabled(!soundEnabled); }}
+                                className="absolute bottom-4 right-10 z-50 bg-white/95 p-3 rounded-full transition-all shadow-lg text-rose-500 flex items-center justify-center border border-rose-100"
+                                title={soundEnabled ? "Mute Music" : "Play Music"}
+                            >
+                                {soundEnabled ? <SVG_VOLUME_ON /> : <SVG_VOLUME_OFF />}
+                            </button>
+                        )}
 
-                        {/* Hint Pen */}
+                        {/* Interactive Hint Pen sitting off-notebook on the wood desk */}
                         {gameState === 'PLAYING' && (
                             <button 
-                                onClick={() => setHints(!hints)}
+                                onClick={handlePenToggleClick}
                                 onMouseEnter={() => setPenHover(true)}
                                 onMouseLeave={() => setPenHover(false)}
-                                className="absolute top-4 right-4 z-50 hover:scale-[1.05] active:scale-95 transition-transform duration-150 cursor-pointer"
+                                className="absolute top-4 right-10 z-50 transition-transform duration-150 cursor-pointer"
                             >
                                 <img 
                                     src={penHover ? "https://i.postimg.cc/W37NGsWt/pen-select.png" : "https://i.postimg.cc/hj0DLKyj/pen.png"} 
                                     alt="Hint Pen" 
-                                    className="w-[160px] object-contain drop-shadow-md" 
+                                    className="w-[180px] object-contain drop-shadow-md" 
                                 />
-                                <span className="absolute inset-0 flex items-center justify-center text-lg text-pink-600 mt-[-5px] tracking-wide font-bold">
-                                    {hints ? "Hints: ON" : "Hint"}
+                                <span className="absolute inset-0 flex items-center justify-center text-lg text-pink-600 mt-[-5px] tracking-wide font-bold font-omori">
+                                    {hints ? "Hints: ON" : "Hints"}
                                 </span>
                             </button>
                         )}
 
-                        {/* PLAYING STATE WORKSPACE */}
+                        {/* WORKSPACE - MAIN BOOK INTERFACE */}
                         {gameState === 'PLAYING' && (
                             <div 
-                                className="relative w-[90%] h-[92%] transition-all duration-300 shadow-2xl rounded-sm" 
+                                className="relative w-[90%] h-[92%] transition-all duration-300 rounded-sm font-omori" 
                                 style={{ 
-                                    backgroundImage: `url(${notebookBg})`, 
+                                    backgroundImage: `url(${NOTEBOOKS.tsukasa})`, 
                                     backgroundSize: '100% 100%', 
                                     backgroundRepeat: 'no-repeat' 
                                 }}
                             >
-                                {/* LEFT PAGE */}
+                                {/* LEFT PAGE - Chosen words and character chibis */}
                                 <div className="absolute left-[6%] top-[10%] w-[40%] h-[85%] flex flex-col justify-between">
                                     <div className="w-full">
-                                        <h2 className="text-2xl text-slate-800 font-extrabold uppercase tracking-widest pl-4 pt-2 border-b-2 border-slate-300/60 pb-1">
+                                        <h2 className="text-3xl text-slate-800 font-extrabold uppercase tracking-widest pl-4 pt-2 border-b-2 border-slate-300/40 pb-1">
                                             CHOSEN WORDS
                                         </h2>
-                                        {/* Scroll */}
-                                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-2xl px-4 mt-3 max-h-[350px] overflow-y-auto custom-scrollbar">
+                                        
+                                        {/* Scrollable list container */}
+                                        <div className="grid grid-cols-2 gap-x-4 gap-y-3 text-2xl px-4 mt-3 max-h-[260px] overflow-y-auto custom-scrollbar">
                                             {selectedWords.map((word, i) => (
                                                 <div key={i} className="text-slate-700 font-medium truncate">
                                                     {word}
@@ -547,8 +844,8 @@
                                         </div>
                                     </div>
 
-                                    {/* Le Fantasist */}
-                                    <div className="absolute bottom-1 left-0 right-0 flex items-end justify-between px-2">
+                                    {/* Transparent chibi placement resting on bottom book margin */}
+                                    <div className="absolute bottom-4 left-0 right-0 flex items-end justify-between px-2">
                                         {CHARACTER_ORDER.map(id => {
                                             const char = CHARACTERS[id];
                                             const isJumping = reactionStates[id];
@@ -556,13 +853,6 @@
 
                                             return (
                                                 <div key={id} className="flex flex-col items-center relative flex-1">
-                                                    {/* Floating Love Indicator */}
-                                                    {isJumping && (
-                                                        <span className="absolute -top-7 bg-pink-500 text-white text-[10px] px-1.5 py-0.5 rounded-md font-bold shadow animate-bounce">
-                                                            Love!
-                                                        </span>
-                                                    )}
-                                                    
                                                     <img 
                                                         src={imgSource} 
                                                         alt={char.name}
@@ -574,31 +864,22 @@
                                     </div>
                                 </div>
 
-                                {/* RIGHT PAGE */}
+                                {/* RIGHT PAGE - Dynamic word choices matching ruler spacing */}
                                 <div className="absolute right-[6%] top-[10%] w-[40%] h-[80%] flex flex-col justify-between">
-                                    {/* Words counter */}
-                                    <div className="text-right text-3xl text-slate-500 pr-10 pt-3 font-bold tracking-wider">
+                                    {/* Words chosen tracker */}
+                                    <div className="text-right text-3xl text-slate-500 pr-10 pt-2 font-bold tracking-wider">
                                         {selectedWords.length}/20
                                     </div>
 
-                                    {/* Words grid */}
-                                    <div className="grid grid-cols-2 gap-x-12 gap-y-7 px-8 pb-[19%] mt-8 flex-grow items-center">
+                                    {/* 10 dynamic vocab buttons matched flawlessly with the paper lines */}
+                                    <div className="grid grid-cols-2 gap-x-12 gap-y-7 px-8 pb-[17%] mt-7 flex-grow items-center">
                                         {currentWordOptions.map((wordObj) => {
-                                            let hintStyle = "text-slate-800 hover:text-[#ce4a7e]";
-                                            
-                                            if (hints) {
-                                                const maxScore = Math.max(wordObj.tsukasa, wordObj.rui, wordObj.akito, wordObj.touya);
-                                                if (maxScore === wordObj.tsukasa) hintStyle = "text-amber-500 font-bold scale-[1.03]";
-                                                else if (maxScore === wordObj.rui) hintStyle = "text-purple-500 font-bold scale-[1.03]";
-                                                else if (maxScore === wordObj.akito) hintStyle = "text-orange-500 font-bold scale-[1.03]";
-                                                else if (maxScore === wordObj.touya) hintStyle = "text-blue-500 font-bold scale-[1.03]";
-                                            }
-
                                             return (
                                                 <button 
                                                     key={wordObj.word}
                                                     onClick={() => handleWordClick(wordObj)}
-                                                    className={`text-left text-3xl transition-all duration-150 transform hover:scale-[1.03] active:scale-95 truncate ${hintStyle}`}
+                                                    className="text-left text-3xl transition-all duration-150 truncate word-btn"
+                                                    style={getWordStyle(wordObj)}
                                                 >
                                                     {wordObj.word}
                                                 </button>
@@ -609,126 +890,177 @@
                             </div>
                         )}
 
-                        {/* TRANSITION SCREEN */}
-                        {gameState === 'TRANSITION' && (
-                            <div className="relative w-full h-full bg-slate-900/70 rounded-xl overflow-hidden flex flex-col items-center justify-center text-center p-12">
-                                <h2 className="text-5xl font-extrabold text-white mb-4 animate-pulse">Poem Finished!</h2>
-                                <p className="text-slate-200 text-2xl max-w-xl mb-8 leading-relaxed">
-                                    You folded your written pages carefully. The Literature Club is ready to read and share critiques of your masterpiece...
-                                </p>
-                                <button 
-                                    onClick={startDialoguePhase}
-                                    className="px-8 py-4 bg-pink-500 text-white rounded-full text-3xl font-bold hover:bg-pink-600 hover:scale-105 active:scale-95 transition-all shadow-lg"
-                                >
-                                    Share with {CHARACTERS[winningCharId].name}
-                                </button>
-                            </div>
-                        )}
-
-                        {/* DIALOGUE ROUTE SCREEN */}
+                        {/* STREAMING_CHUNK: Formatting visual novel elements and absolute layering layouts */}
+                        {/* DIALOGUE CLASSROOM SCREEN */}
                         {gameState === 'DIALOGUE' && (
-                            <div className="relative w-full h-full bg-[radial-gradient(circle_at_center,_#fff3f5_0%,_#ffe4e6_100%)] rounded-xl overflow-hidden shadow-2xl flex flex-col justify-end p-6">
-                                
-                                {/* Large Character Portrait standing in the classroom */}
-                                <div className="absolute inset-0 flex items-end justify-center pb-[160px] pointer-events-none">
-                                    <img 
-                                        src={currentDialogue?.expression === "happy" || currentDialogue?.expression === "blush" || currentDialogue?.expression === "surprised" ? CHARACTERS[winningCharId].laughUrl : CHARACTERS[winningCharId].idleUrl} 
-                                        alt={CHARACTERS[winningCharId].name}
-                                        className="h-[360px] object-contain transition-transform duration-300 hover:scale-105" 
-                                    />
+                            <div 
+                                className="absolute inset-0 w-full h-full bg-cover bg-center flex flex-col justify-end p-6 select-none"
+                                style={{ backgroundImage: "url('https://i.postimg.cc/MK1dV84X/School-Classroom.png')" }}
+                            >
+                                {/* Standing Character Portrait scaled to fill the screen under the textbox */}
+                                <div className="absolute inset-0 flex items-end justify-center pointer-events-none z-10 overflow-hidden">
+                                    {currentStep && (
+                                        <img 
+                                            src={CHARACTERS[winningCharId].sprites[currentStep.expression] || CHARACTERS[winningCharId].sprites.talk} 
+                                            alt={CHARACTERS[winningCharId].name}
+                                            className="h-[92%] object-contain object-bottom transition-all duration-300 transform scale-105" 
+                                        />
+                                    )}
                                 </div>
 
-                                {/* Dialogue box layout */}
-                                <div className="relative z-10 bg-white/95 border-4 border-pink-200 p-6 rounded-2xl shadow-xl min-h-[160px] flex flex-col justify-between">
-                                    {/* Nameplate */}
+                                {/* Floating Ribbon Choices Overlay centered directly over character */}
+                                {isChoiceActive && (
+                                    <div className="absolute inset-0 flex flex-col items-center justify-center space-y-4 z-40 bg-black/10">
+                                        {CHARACTERS[winningCharId].choices.map((opt, i) => (
+                                            <button 
+                                                key={i}
+                                                onClick={() => handleChoiceSelect(opt)}
+                                                className="w-[600px] h-[52px] border-2 border-pink-300/40 font-ddlc font-bold text-xl uppercase tracking-wider rounded-sm flex items-center justify-center cursor-pointer choice-ribbon"
+                                            >
+                                                {opt.text}
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+
+                                {/* Dating Sim Dialogue Textbox overlay */}
+                                <div 
+                                    className="relative mx-auto mb-2 w-[900px] h-[170px] z-20 flex flex-col justify-between p-6 select-none"
+                                    style={{ 
+                                        backgroundImage: "url('https://i.postimg.cc/TYfctXjB/Textbox.png')",
+                                        backgroundSize: '100% 100%',
+                                        backgroundRepeat: 'no-repeat'
+                                    }}
+                                >
+                                    {/* Namebox Overlay */}
                                     <div 
-                                        className="absolute top-0 left-8 -translate-y-1/2 px-6 py-1.5 rounded-full text-white text-xl font-bold shadow-md border-2 border-white"
-                                        style={{ backgroundColor: CHARACTERS[winningCharId].color }}
+                                        className="absolute top-0 left-8 -translate-y-[100%] w-[190px] h-[48px] flex items-center justify-center font-ddlc font-bold text-[#ba5599] text-2xl"
+                                        style={{ 
+                                            backgroundImage: "url('https://i.postimg.cc/L62VxMkw/Namebox.png')",
+                                            backgroundSize: '100% 100%',
+                                            backgroundRepeat: 'no-repeat'
+                                        }}
                                     >
-                                        {CHARACTERS[winningCharId].name}
+                                        <span className="pb-1">
+                                            {currentStep ? currentStep.speaker : CHARACTERS[winningCharId].name}
+                                        </span>
                                     </div>
 
-                                    <div className="pt-2">
-                                        {currentDialogue?.type === 'choice' ? (
-                                            <div className="space-y-3 mt-2">
-                                                {currentDialogue.options.map((opt, i) => (
-                                                    <button 
-                                                        key={i}
-                                                        onClick={() => handleChoiceSelect(opt)}
-                                                        className="w-full text-left p-3 rounded-xl border border-pink-100 bg-pink-50/50 hover:bg-pink-100 text-pink-700 text-xl font-semibold transition-all hover:scale-[1.01]"
-                                                    >
-                                                        {opt.text}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-slate-700 text-2xl font-medium leading-relaxed">
+                                    {/* Dialogue text block with padding right to prevent overlapping button */}
+                                    <div className="pt-4 px-8 pr-28 flex-grow overflow-hidden">
+                                        {!isChoiceActive && (
+                                            <p className="text-slate-800 text-2xl font-semibold leading-normal font-ddlc">
                                                 {typingText}
+                                            </p>
+                                        )}
+                                        {isChoiceActive && (
+                                            <p className="text-slate-400 text-xl italic leading-normal font-ddlc text-center">
+                                                Please make a selection...
                                             </p>
                                         )}
                                     </div>
 
-                                    {currentDialogue?.type !== 'choice' && (
-                                        <div className="flex justify-between items-center mt-4">
-                                            <span className="text-slate-400 text-sm">Dialogue {dialogueStep + 1} / {CHARACTERS[winningCharId].dialogues.length}</span>
-                                            <button 
-                                                onClick={() => handleDialogueNext()}
-                                                className="px-6 py-2 bg-slate-800 text-white rounded-xl text-lg font-bold hover:bg-slate-700 active:scale-95 transition-all shadow"
-                                            >
-                                                Next
-                                            </button>
-                                        </div>
+                                    {/* Next dialog transition trigger absolutely positioned to stay locked inside box */}
+                                    {!isChoiceActive && (
+                                        <button 
+                                            onClick={handleDialogueNext}
+                                            className="absolute bottom-5 right-8 z-30 px-5 py-1 bg-pink-400 hover:bg-pink-500 text-white rounded-lg text-lg font-bold font-ddlc transition-all shadow"
+                                        >
+                                            Next
+                                        </button>
                                     )}
                                 </div>
+
+                                {/* Volume toggle overlay sitting natively in bottom corner during VN dialogue */}
+                                <button 
+                                    onClick={() => { playSelectSound(); setSoundEnabled(!soundEnabled); }}
+                                    className="absolute bottom-4 right-10 z-50 bg-white/95 p-3 rounded-full transition-all shadow-lg text-rose-500 flex items-center justify-center border border-rose-100"
+                                    title={soundEnabled ? "Mute Music" : "Play Music"}
+                                >
+                                    {soundEnabled ? <SVG_VOLUME_ON /> : <SVG_VOLUME_OFF />}
+                                </button>
                             </div>
                         )}
 
-                        {/* ENDING SUMMARY SCREEN */}
+                        {/* STREAMING_CHUNK: Designing the final notebook summary page with absolute inset scroll container positioning */}
+                        {/* SUMMARY REVIEW ENDING - NO CONTAINER COLLAPSE */}
                         {gameState === 'ENDING' && (
-                            <div className="relative w-full h-full bg-white rounded-xl shadow-2xl p-8 flex flex-col justify-between overflow-hidden">
-                                <div className="flex justify-between items-center border-b pb-4 border-slate-100">
-                                    <div>
-                                        <h2 className="text-4xl font-extrabold text-slate-800">Poem Review Summary</h2>
-                                        <p className="text-slate-500 text-lg mt-1">Shared critiques with {CHARACTERS[winningCharId].name}</p>
+                            <div 
+                                className="relative w-[90%] h-[92%] transition-all duration-300 rounded-sm font-omori" 
+                                style={{ 
+                                    backgroundImage: `url(${NOTEBOOKS[winningCharId]})`, 
+                                    backgroundSize: '100% 100%', 
+                                    backgroundRepeat: 'no-repeat' 
+                                }}
+                            >
+                                {/* LEFT PAGE - Polaroid and Review Details */}
+                                <div className="absolute left-[6%] top-[10%] w-[40%] h-[85%] flex flex-col justify-between px-4">
+                                    <div className="w-full">
+                                        <h2 className="text-3xl text-slate-800 font-extrabold tracking-widest pt-2">
+                                            Review
+                                        </h2>
+                                        <p className="text-2xl text-slate-600 font-bold mt-1">
+                                            Route: {CHARACTERS[winningCharId].fullName}
+                                        </p>
                                     </div>
-                                    <div className="text-center px-6 py-2 bg-pink-50 rounded-2xl border border-pink-100">
-                                        <span className="text-slate-500 text-xs block">Route Affinity</span>
-                                        <span className="text-3xl font-bold text-pink-600">{scores[winningCharId]} Pts</span>
+
+                                    {/* Polaroid photo tilted beautifully and rendered significantly larger */}
+                                    <div className="flex-grow flex items-center justify-center py-2">
+                                        <div className="transform -rotate-3 transition-transform hover:rotate-0 duration-300">
+                                            <img 
+                                                src={CHARACTERS[winningCharId].endUrl} 
+                                                alt={`${CHARACTERS[winningCharId].name} Memory`}
+                                                className="w-[500px] object-contain shadow-xl border-[6px] border-white"
+                                            />
+                                        </div>
+                                    </div>
+
+                                    {/* DDLC-font custom button positioned cleanly inside left page without vertical stretching */}
+                                    <div className="pb-4 flex justify-center">
+                                        <button 
+                                            onClick={handleRestart}
+                                            onMouseEnter={() => setButtonHover(true)}
+                                            onMouseLeave={() => setButtonHover(false)}
+                                            className="w-[280px] h-[55px] flex items-center justify-center font-ddlc font-bold text-2xl transition-all duration-200"
+                                            style={{
+                                                backgroundImage: `url(${buttonHover ? 'https://i.postimg.cc/D0rfnDMb/Button-Hover.png' : 'https://i.postimg.cc/SR6Qk5vY/Button.png'})`,
+                                                backgroundSize: '100% 100%',
+                                                backgroundRepeat: 'no-repeat',
+                                                color: buttonHover ? '#ffaa99' : '#000000'
+                                            }}
+                                        >
+                                            <span className="pb-1">Write another poem</span>
+                                        </button>
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-2 gap-8 my-4 flex-grow items-center">
-                                    <div className="flex flex-col items-center bg-slate-50 p-6 rounded-2xl border border-slate-100">
-                                        <img src={CHARACTERS[winningCharId].laughUrl} className="h-[180px] object-contain mb-4" />
-                                        <h4 className="text-2xl font-bold text-slate-700">{CHARACTERS[winningCharId].name}</h4>
-                                        <p className="text-slate-500 text-xs uppercase font-extrabold tracking-wider">{CHARACTERS[winningCharId].title}</p>
+                                {/* RIGHT PAGE - Chosen Words and Affection Level */}
+                                <div className="absolute right-[6%] top-[10%] w-[40%] h-[80%] flex flex-col px-4">
+                                    {/* Affinity points block */}
+                                    <div className="text-right text-3xl text-slate-800 font-extrabold pr-6 pt-2">
+                                        Affinity: {scores[winningCharId]}
                                     </div>
 
-                                    <div className="flex flex-col justify-between h-full py-4">
-                                        <div>
-                                            <h5 className="text-xl font-bold text-slate-600 mb-2">My Poem Vocabulary</h5>
-                                            <div className="bg-amber-50/50 border border-amber-100 p-4 rounded-xl max-h-[140px] overflow-y-auto custom-scrollbar">
-                                                <div className="grid grid-cols-2 gap-1 text-slate-600 text-lg italic">
-                                                    {selectedWords.map((word, i) => (
-                                                        <div key={i}>~ {word}</div>
-                                                    ))}
-                                                </div>
+                                    {/* Upgraded layout block using absolute coordinates to guarantee no height collapsible bugs */}
+                                    <div className="w-full flex-1 mt-4 relative h-[320px] min-h-[320px]">
+                                        <h3 className="text-2xl text-slate-800 font-extrabold pl-4 border-b border-slate-300/40 pb-1">
+                                            Words Chosen
+                                        </h3>
+                                        
+                                        {/* Simplified clean absolute container containing scrollable content safely */}
+                                        <div className="absolute inset-x-0 bottom-0 top-[45px] overflow-y-auto px-4 py-2 custom-scrollbar">
+                                            <div 
+                                                className="grid grid-cols-2 gap-x-6 gap-y-4 text-xl md:text-2xl" 
+                                                style={{ lineHeight: '1.6' }}
+                                            >
+                                                {selectedWords.map((word, index) => (
+                                                    <div key={index} className="text-slate-700 font-medium truncate py-1">
+                                                        ~ {word}
+                                                    </div>
+                                                ))}
                                             </div>
                                         </div>
-
-                                        <div className="bg-pink-50 border border-pink-100/60 rounded-xl p-4 text-pink-800 text-base">
-                                            Congratulations! You connected deeply with {CHARACTERS[winningCharId].name}'s personality and unlocked their customized club route dialogue.
-                                        </div>
                                     </div>
-                                </div>
-
-                                <div className="border-t pt-4 border-slate-100">
-                                    <button 
-                                        onClick={handleRestart}
-                                        className="w-full py-4 bg-slate-800 hover:bg-slate-700 text-white rounded-full text-2xl font-bold transition-all shadow-md active:scale-[0.99]"
-                                    >
-                                        Write Another Poem
-                                    </button>
                                 </div>
                             </div>
                         )}
