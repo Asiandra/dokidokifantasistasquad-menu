@@ -7,4 +7,5 @@ If you'd like to <s>cheat</s> see what words are associated with who, the list c
 <p>This is made entirely using HTML, CSS, and JavaScript, so this is very clunky and jank compared to if I actually used Ren'py.<br>
 Thanks for checking this out! If you want to see more projects I've made, check out my <a href="https://asiandra.github.io/Vibrant-Twilight/">Vibrant Twilight</a> and <a href="https://asiandra.github.io/comfort-characters/">comfort characters</a> pages!</p>
 <img src="https://i.postimg.cc/MGKDwcWv/Preview.png" style="pointer-events: none; width: 50%;">
-<img src="https://i.postimg.cc/RFqDz9ty/Poem-Game-Preview.png" style="pointer-events: none; width: 50%;">
+<img src="https://i.postimg.cc/q7ST9tKf/Poem-Game-Preview.png" style="pointer-events: none; width: 50%;">
+<img src="https://i.postimg.cc/tgVfnB10/Review-Touya.png" style="pointer-events: none; width: 50%;">
