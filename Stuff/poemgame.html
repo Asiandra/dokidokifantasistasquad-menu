@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doki Doki Fantasista Squad</title>
+    <title>Doki Doki Fantasista SQUAD - Poem Game</title>
     <link rel="icon" type="image/png" href="https://i.postimg.cc/bwdt5PFr/Fantasista-Icon.png">
 
     <!-- Embed Stuff -->
@@ -21,7 +21,7 @@
         <meta name="twitter:title" content="Doki Doki Fantasista SQUAD - Poem Game">
         <meta name="twitter:description" content="DDLC poem game but with Fantasista SQUAD">
         <meta name="twitter:image" content="https://asiandra.github.io/dokidokifantasistasquad-menu/Stuff/poemgame.html">
-    
+        
     <!-- Tailwind CSS CDN for utility formatting -->
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -110,15 +110,13 @@
             justify-content: center;
             align-items: center;
             position: relative;
-            transition: background-image 0.5s ease, background-color 0.5s ease;
+            transition: background-color 0.5s ease;
         }
 
-        /* STREAMING_CHUNK: Configuring full-viewport classroom background layout... */
-        /* Overrides the background image to show the classroom over the entire screen instead of black bars */
+        /* Class override to turn desk completely black during VN/dialogue mode */
         .desk-bg.vn-active {
-            background-image: url('https://i.postimg.cc/MK1dV84X/School-Classroom.png') !important;
-            background-size: cover;
-            background-position: center;
+            background-image: none !important;
+            background-color: #000000 !important;
         }
 
         /* Decision Ribbon Hover Transitions */
@@ -210,7 +208,6 @@
             { word: "Guard", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
             { word: "Pancake", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
             { word: "Passionate", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
-            { word: "Reality", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
             { word: "Regret", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
             { word: "Surpass", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
             { word: "Static", tsukasa: 0, rui: 0, akito: 1, touya: 0 },
@@ -258,6 +255,8 @@
             { word: "Chapter", tsukasa: 1, rui: 0, akito: 0, touya: 1 },
             { word: "Discipline", tsukasa: 1, rui: 0, akito: 0, touya: 1 },
             { word: "Piano", tsukasa: 1, rui: 0, akito: 0, touya: 1 },
+            // Akirui words
+            { word: "Reality", tsukasa: 0, rui: 1, akito: 1, touya: 0 },
             // Ruitoya Words
             { word: "Genius", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
             { word: "Honest", tsukasa: 0, rui: 1, akito: 0, touya: 1 },
@@ -276,7 +275,6 @@
             { word: "Music", tsukasa: 1, rui: 1, akito: 1, touya: 1 }
         ];
 
-        // STREAMING_CHUNK: Setting up characters, sprite assets, and dialogues
         // Character Sprite Configuration for Dating Sim View
         const CHARACTERS = {
             tsukasa: {
@@ -296,24 +294,24 @@
                     flustered: "https://i.postimg.cc/Y9TX724d/Tsukasa-Flustered.png"
                 },
                 dialogues: [
-                    { text: "Aha! Are you finished with your masterpiece? Let me gaze upon your poetry!", expression: "talk" },
-                    { text: "Ohoho! Look at these words! This poem practically shines as bright as I do!", expression: "laugh" },
-                    { text: "Your verses have the dazzling energy needed to capture an audience's heart!", expression: "proud" },
+                    { text: "Aha! Are you finished with your masterpiece? Allow me to gaze upon your poetry!", expression: "talk" },
+                    { text: "Ohoho! Look at these words! This poem practically shines as bright as I do!", expression: "proud" },
+                    { text: "Your verses have the dazzling energy needed to capture an audience's heart!", expression: "laugh" },
                     { text: "Tell me, were you hoping to stand on stage beside me when you wrote this?", expression: "think" }
                 ],
                 choices: [
                     { 
                         text: "Yes! Let's perform together.", 
                         fullResponse: "Yes! I want to perform on stage with you and make the crowd cheer!", 
-                        scoreMod: 10,
+                        scoreMod: 5,
                         reply: "An excellent answer! We shall deliver a performance that will go down in history! Keep practicing your writing, partner!",
                         replyExpression: "proud"
                     },
                     { 
-                        text: "I want your star to shine.", 
-                        fullResponse: "I wanted to make sure your dazzling star shines the brightest of all.", 
-                        scoreMod: 5,
-                        reply: "A spectacular sentiment! With your support, there is absolutely no limit to how far our stage show will reach!",
+                        text: "I want you to shine.", 
+                        fullResponse: "I wanted to make sure you shine the brightest of them all.", 
+                        scoreMod: 10,
+                        reply: "A-ah! A spectacular sentiment! Well, with your support, there is absolutely no limit to how far our shows will reach!",
                         replyExpression: "flustered"
                     }
                 ]
@@ -328,30 +326,30 @@
                 endUrl: "https://i.postimg.cc/FsVmGznH/End-Rui.png",
                 sprites: {
                     talk: "https://i.postimg.cc/kg7Tqp5x/Rui-Talk.png",
-                    think: "https://i.postimg.cc/t49BpMgW/Rui-Talk-2.png",
-                    laugh: "https://i.postimg.cc/rwqfMPpG/Rui-Happy.png",
-                    proud: "https://i.postimg.cc/Mpz9qFG1/Rui-Happy-2.png"
+                    talk2: "https://i.postimg.cc/t49BpMgW/Rui-Talk-2.png",
+                    happy: "https://i.postimg.cc/rwqfMPpG/Rui-Happy.png",
+                    happy2: "https://i.postimg.cc/Mpz9qFG1/Rui-Happy-2.png"
                 },
                 dialogues: [
-                    { text: "Fufu~ It's showtime! Let's see what interesting chemistry you've put onto the paper.", expression: "talk" },
-                    { text: "Oh, how intriguing! What a wonderfully complex mind you have.", expression: "laugh" },
-                    { text: "This vocabulary opens up so many possibilities for creative stage effects. Truly marvelous!", expression: "proud" },
-                    { text: "Do you enjoy experimenting with your words as much as I enjoy building new inventions?", expression: "think" }
+                    { text: "Fufu~ It's showtime! Let's see what interesting chemistry you've put onto the paper.", expression: "talk2" },
+                    { text: "Oh, how intriguing! What a wonderfully complex mind you have.", expression: "talk" },
+                    { text: "This vocabulary opens up so many possibilities for creative stage effects. Truly marvelous!", expression: "happy" },
+                    { text: "Do you enjoy experimenting with your words as much as I enjoy building new inventions?", expression: "talk2" }
                 ],
                 choices: [
-                    { 
-                        text: "Crafting with you is an adventure.", 
-                        fullResponse: "Definitely! Crafting ideas with you is always an absolute adventure.", 
-                        scoreMod: 10,
-                        reply: "Wonderful! We make quite the inventive team, don't we? Let's design another brilliant show together soon.",
-                        replyExpression: "proud"
-                    },
                     { 
                         text: "I like finding combinations.", 
                         fullResponse: "I like seeing what kind of unexpected, beautiful combinations we can find together.", 
                         scoreMod: 5,
                         reply: "Exactly! The beauty lies in the unexpected. This poem is proof of your wonderful spark.",
                         replyExpression: "talk"
+                    },
+                    { 
+                        text: "Crafting with you is an adventure.", 
+                        fullResponse: "Definitely! Crafting ideas with you is always an absolute adventure.", 
+                        scoreMod: 10,
+                        reply: "Really? Fufufu~ It's difficult to find someone who finds my ideas as intereting as you do. Let's design another brilliant show together soon.",
+                        replyExpression: "happy2"
                     }
                 ]
             },
@@ -366,29 +364,29 @@
                 sprites: {
                     talk: "https://i.postimg.cc/0QKfVgtg/Akito-Talk.png",
                     think: "https://i.postimg.cc/k5psNMyg/Akito-Think.png",
-                    laugh: "https://i.postimg.cc/XvzLKNg7/Akito-Curious.png",
-                    proud: "https://i.postimg.cc/C1nNcyvp/Akito-Shy.png"
+                    curious: "https://i.postimg.cc/XvzLKNg7/Akito-Curious.png",
+                    shy: "https://i.postimg.cc/C1nNcyvp/Akito-Shy.png"
                 },
                 dialogues: [
                     { text: "Oi. You're done with the poem already? Hand it over, let me check it out.", expression: "think" },
-                    { text: "...Are you trying to hint at something...?", expression: "laugh" },
-                    { text: "Still, the rhythm in this is actually solid. You've got a great sense of beat.", expression: "talk" },
-                    { text: "Were you thinking about our rehearsals when you put these words together?", expression: "think" }
+                    { text: "...Are you trying to hint at something...?", expression: "curious" },
+                    { text: "Still, the rhythm in this is actually solid. You've got a great sense of beat.", expression: "think" },
+                    { text: "Were you thinking about our rehearsals when you put these words together?", expression: "curious" }
                 ],
                 choices: [
                     { 
-                        text: "Matches your drive.", 
+                        text: "Matches you.", 
                         fullResponse: "I wanted to write something powerful that matches your drive.", 
-                        scoreMod: 10,
-                        reply: "Huh... well, you definitely nailed it. Don't go slacking off now, we have a lot of practice ahead of us!",
-                        replyExpression: "proud"
+                        scoreMod: 5,
+                        reply: "Huh... well, you definitely nailed it. But don't go slacking off now. We have a lot more to practice if we want to make it to the top.",
+                        replyExpression: "think"
                     },
                     { 
                         text: "Wanted to make you smile.", 
                         fullResponse: "I just thought writing a poem like this would make you smile.", 
-                        scoreMod: 5,
-                        reply: "Tch, you say some embarrassing things so easily. But... thanks. Let's work hard again tomorrow.",
-                        replyExpression: "proud"
+                        scoreMod: 10,
+                        reply: "Tch. Don't say something so embarassing. But... thanks. Let's work hard again tomorrow.",
+                        replyExpression: "shy"
                     }
                 ]
             },
@@ -402,30 +400,30 @@
                 endUrl: "https://i.postimg.cc/YqHM1Y8C/End-Touya.png",
                 sprites: {
                     talk: "https://i.postimg.cc/3rp1pT4X/Touya-Talk.png",
-                    think: "https://i.postimg.cc/ZnrLh8zW/Touya-Closed-Eyes.png",
-                    laugh: "https://i.postimg.cc/HW5z5gc0/Touya-Happy.png",
-                    proud: "https://i.postimg.cc/MZR5RSMy/Touya-Soft.png"
+                    closed: "https://i.postimg.cc/ZnrLh8zW/Touya-Closed-Eyes.png",
+                    happy: "https://i.postimg.cc/HW5z5gc0/Touya-Happy.png",
+                    soft: "https://i.postimg.cc/MZR5RSMy/Touya-Soft.png"
                 },
                 dialogues: [
-                    { text: "Excuse me... is your poem complete? If you do not mind, I would like to read it.", expression: "talk" },
-                    { text: "Ah... this is wonderful. These words really create a peaceful melody.", expression: "proud" },
-                    { text: "It reads like a gentle song playing in a quiet library. It is very calming.", expression: "think" },
+                    { text: "Excuse me... is your poem complete? If you don't mind, I'd like to read it.", expression: "talk" },
+                    { text: "Ah... this is wonderful. These words really create a peaceful melody.", expression: "happy" },
+                    { text: "It reads like a gentle song playing in a quiet library. It is very calming.", expression: "closed" },
                     { text: "I wonder... does writing poetry bring you the same peace that playing music brings me?", expression: "talk" }
                 ],
                 choices: [
+                    { 
+                        text: "Comfort in quiet.", 
+                        fullResponse: "I do. I find a lot of comfort in the quiet focus of finding the right words.", 
+                        scoreMod: 5,
+                        reply: "I understand that feeling. The process of composing is very similar. Thank you for sharing this peace with me.",
+                        replyExpression: "happy"
+                    },
                     { 
                         text: "Yes, with you in mind.", 
                         fullResponse: "Yes, I feel that peace, especially when I write with you in mind.", 
                         scoreMod: 10,
                         reply: "I see... That makes me incredibly happy to hear. I look forward to reading whatever you write next.",
-                        replyExpression: "laugh"
-                    },
-                    { 
-                        text: "Comfort in quiet focus.", 
-                        fullResponse: "I do. I find a lot of comfort in the quiet focus of finding the right words.", 
-                        scoreMod: 5,
-                        reply: "I understand that feeling. The process of composing is very similar. Thank you for sharing this peace with me.",
-                        replyExpression: "proud"
+                        replyExpression: "soft"
                     }
                 ]
             }
@@ -463,11 +461,10 @@
             const bgmRef = useRef(null);
             const typingTimer = useRef(null);
 
-            // Vector resolution scaler locks game canvas inside 1100 x 618 box
             useEffect(() => {
                 const handleResize = () => {
-                    const targetWidth = 1100;
-                    const targetHeight = 618;
+                    const targetWidth = 1080;
+                    const targetHeight = 720;
                     const scaleX = window.innerWidth / targetWidth;
                     const scaleY = window.innerHeight / targetHeight;
                     const finalScale = Math.min(scaleX, scaleY, 1.2);
@@ -910,10 +907,13 @@
                             </div>
                         )}
 
-                        {/* STREAMING_CHUNK: Formatting visual novel elements and absolute layout layers */}
-                        {/* DIALOGUE CLASSROOM SCREEN - BACKGROUND REMOVED FROM CONTAINER SO OUTER SPREAD VIEWER TAKES OVER */}
+                        {/* STREAMING_CHUNK: Formatting visual novel elements and absolute layering layouts */}
+                        {/* DIALOGUE CLASSROOM SCREEN */}
                         {gameState === 'DIALOGUE' && (
-                            <div className="absolute inset-0 w-full h-full flex flex-col justify-end p-6 select-none bg-transparent">
+                            <div 
+                                className="absolute inset-0 w-full h-full bg-cover bg-center flex flex-col justify-end p-6 select-none"
+                                style={{ backgroundImage: "url('https://i.postimg.cc/MK1dV84X/School-Classroom.png')" }}
+                            >
                                 {/* Standing Character Portrait scaled to fill the screen under the textbox */}
                                 <div className="absolute inset-0 flex items-end justify-center pointer-events-none z-10 overflow-hidden">
                                     {currentStep && (
