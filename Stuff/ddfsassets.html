@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Doki Doki Fantasista SQUAD Poem Game Assets</title>
+  <link rel="icon" type="image/png" href="https://i.postimg.cc/bwdt5PFr/Fantasista-Icon.png">
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Montserrat', 'sans-serif'],
+          },
+        },
+      },
+    }
+  </script>
+
+  <!-- Google Fonts: Montserrat -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
+
+  <!-- React & ReactDOM -->
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
+
+  <!-- Babel Direct Compilation -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <!-- Embed Stuff -->
+    <meta name="description" content="Doki Doki Fantasista SQUAD - Assets">
+  
+    <!-- Open Graph -->
+    <meta property="og:title" content="Doki Doki Fantasista SQUAD - Assets">
+    <meta property="og:description" content="Doki Doki Fantasista SQUAD Assets">
+    <meta property="og:image" content="https://i.postimg.cc/xd0NwsW4/Header.png">
+    <meta property="og:url" content="https://asiandra.github.io/dokidokifantasistasquad-menu/Stuff/ddfsassets.html">
+    <meta property="og:type" content="website">
+  
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Doki Doki Fantasista SQUAD - Assets">
+    <meta name="twitter:description" content="Doki Doki Fantasista SQUAD Assets">
+    <meta name="twitter:image" content="https://i.postimg.cc/xd0NwsW4/Header.png">
+
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+    }
+    .dark ::-webkit-scrollbar-thumb {
+      background: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- The target element where our React app will render -->
+  <div id="root"></div>
+
+  <!-- React Script block utilizing Babel compilation -->
+  <script type="text/babel">
+    const { useState, useEffect } = React;
+
+    // GALLERY DATA LIST
+    const GALLERY_ITEMS = [
+      // --- PREVIEWS ---
+      {
+        id: 'preview-1',
+        title: 'Main Menu',
+        image: 'https://i.postimg.cc/MGKDwcWv/Preview.png',
+        category: 'Previews',
+        layout: 'preview'
+      },
+      {
+        id: 'preview-2',
+        title: 'Poem Game',
+        image: 'https://i.postimg.cc/q7ST9tKf/Poem-Game-Preview.png',
+        category: 'Previews',
+        layout: 'preview'
+      },
+      {
+        id: 'preview-3',
+        title: 'Touya Route Review',
+        image: 'https://i.postimg.cc/tgVfnB10/Review-Touya.png',
+        category: 'Previews',
+        layout: 'preview'
+      },
+      {
+        id: 'preview-4',
+        title: 'Gallery Header',
+        image: 'https://i.postimg.cc/xd0NwsW4/Header.png',
+        category: 'Previews',
+        layout: 'preview'
+      },
+
+      // --- POEM GAME ASSETS ---
+      // --- NOTEBOOKS ---
+      {
+        id: 'notebook-1',
+        title: "Tsukasa Bookmark",
+        image: 'https://i.postimg.cc/Jhbd000Q/Notebook-Tsukasa.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Notebooks',
+        layout: 'notebooks'
+      },
+      {
+        id: 'notebook-2',
+        title: "Rui Bookmark",
+        image: 'https://i.postimg.cc/g0vBjjj4/Notebook-Rui.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Notebooks',
+        layout: 'notebooks'
+      },
+      {
+        id: 'notebook-3',
+        title: "Akito Bookmark",
+        image: 'https://i.postimg.cc/g0vBjjjq/Notebook-Akito.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Notebooks',
+        layout: 'notebooks'
+      },
+      {
+        id: 'notebook-4',
+        title: "Touya Bookmark",
+        image: 'https://i.postimg.cc/3wgbNNNF/Notebook-Touya.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Notebooks',
+        layout: 'notebooks'
+      },
+
+      // --- CHIBIS ---
+      {
+        id: 'chibi-1',
+        title: "Tsukasa Idle",
+        image: 'https://i.ibb.co/0VCKWN89/Tsukasa-Idle.gif',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-2',
+        title: "Tsukasa Like",
+        image: 'https://i.postimg.cc/2yr9KnkB/Tsukasa-Laugh.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-3',
+        title: "Rui Idle",
+        image: 'https://i.ibb.co/BKPvcxNg/Rui-Idle.gif',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-4',
+        title: "Rui Like",
+        image: 'https://i.postimg.cc/NFBCzRsH/Rui-Laugh.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-5',
+        title: "Akito Idle",
+        image: 'https://i.ibb.co/ZpFVXf9D/Akito-Idle.gif',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-6',
+        title: "Akito Like",
+        image: 'https://i.postimg.cc/d3wNxGsZ/Akito-Laugh.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-7',
+        title: "Touya Idle",
+        image: 'https://i.ibb.co/xt1GL4Rz/Touya-Idle.gif',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+      {
+        id: 'chibi-8',
+        title: "Touya Like",
+        image: 'https://i.postimg.cc/KjxpHtGT/Touya-Laugh.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Chibis',
+        layout: 'chibis'
+      },
+
+      // --- UNUSED ---
+      {
+        id: 'unusedP-1',
+        title: "Tsukasa Hint",
+        image: 'https://i.postimg.cc/NMnNPHz9/Hint-Tsukasa.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Unused',
+        layout: 'x'
+      },
+      {
+        id: 'unusedP-2',
+        title: "Rui Hint",
+        image: 'https://i.postimg.cc/Y9PXyWsL/Hint-Rui.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Unused',
+        layout: 'x'
+      },
+      {
+        id: 'unusedP-3',
+        title: "Akito Hint",
+        image: 'https://i.postimg.cc/RFYPbHD3/Hint-Akito.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Unused',
+        layout: 'x'
+      },
+      {
+        id: 'unusedP-4',
+        title: "Touya Hint",
+        image: 'https://i.postimg.cc/5yFPc2hx/Hint-Touya.png',
+        category: 'Poem Game Assets',
+        subCategory: 'Unused',
+        layout: 'x'
+      },
+
+      // --- SPECIAL DIALOGUE SPRITES ---
+      // --- TSUKASA ---
+      {
+        id: 'tsukasaSprites-1',
+        title: "Tsukasa Talk",
+        image: 'https://i.postimg.cc/1tbWSRgC/Tsukasa-Talk.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Tsukasa',
+        layout: 'sprites'
+      },
+      {
+        id: 'tsukasaSprites-2',
+        title: "Tsukasa Think Talk",
+        image: 'https://i.postimg.cc/mDKd4ZcV/Tsukasa-Think-Talk.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Tsukasa',
+        layout: 'sprites'
+      },
+      {
+        id: 'tsukasaSprites-3',
+        title: "Tsukasa Laugh",
+        image: 'https://i.postimg.cc/4dj8G4K2/Tsukasa-Laugh.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Tsukasa',
+        layout: 'sprites'
+      },
+      {
+        id: 'tsukasaSprites-4',
+        title: "Tsukasa Proud",
+        image: 'https://i.postimg.cc/BbDmnWDz/Tsukasa-Proud.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Tsukasa',
+        layout: 'sprites'
+      },
+      {
+        id: 'tsukasaSprites-5',
+        title: "Tsukasa Flustered",
+        image: 'https://i.postimg.cc/Y9TX724d/Tsukasa-Flustered.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Tsukasa',
+        layout: 'sprites'
+      },
+      {
+        id: 'tsukasaSprites-6',
+        title: "Tsukasa Surprised (Unused)",
+        image: 'https://i.postimg.cc/4ytWxCtM/Tsukasa-Surprise.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Tsukasa',
+        layout: 'sprites'
+      },
+
+      // --- RUI ---
+      {
+        id: 'ruiSprites-1',
+        title: "Rui Talk",
+        image: 'https://i.postimg.cc/kg7Tqp5x/Rui-Talk.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Rui',
+        layout: 'sprites'
+      },
+      {
+        id: 'ruiSprites-2',
+        title: "Rui Talk 2",
+        image: 'https://i.postimg.cc/t49BpMgW/Rui-Talk-2.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Rui',
+        layout: 'sprites'
+      },
+      {
+        id: 'ruiSprites-3',
+        title: "Rui Happy",
+        image: 'https://i.postimg.cc/rwqfMPpG/Rui-Happy.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Rui',
+        layout: 'sprites'
+      },
+      {
+        id: 'ruiSprites-4',
+        title: "Rui Happy 2",
+        image: 'https://i.postimg.cc/Mpz9qFG1/Rui-Happy-2.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Rui',
+        layout: 'sprites'
+      },
+
+      // --- AKITO ---
+      {
+        id: 'akitoSprites-1',
+        title: "Akito Talk",
+        image: 'https://i.postimg.cc/0QKfVgtg/Akito-Talk.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Akito',
+        layout: 'sprites'
+      },
+      {
+        id: 'akitoSprites-2',
+        title: "Akito Think",
+        image: 'https://i.postimg.cc/k5psNMyg/Akito-Think.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Akito',
+        layout: 'sprites'
+      },
+      {
+        id: 'akitoSprites-3',
+        title: "Akito Curious",
+        image: 'https://i.postimg.cc/XvzLKNg7/Akito-Curious.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Akito',
+        layout: 'sprites'
+      },
+      {
+        id: 'akitoSprites-4',
+        title: "Akito Shy",
+        image: 'https://i.postimg.cc/C1nNcyvp/Akito-Shy.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Akito',
+        layout: 'sprites'
+      },
+
+      // --- TOUYA ---
+      {
+        id: 'touyaSprites-1',
+        title: "Touya Talk",
+        image: 'https://i.postimg.cc/3rp1pT4X/Touya-Talk.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Touya',
+        layout: 'sprites'
+      },
+      {
+        id: 'touyaSprites-2',
+        title: "Touya Happy",
+        image: 'https://i.postimg.cc/HW5z5gc0/Touya-Happy.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Touya',
+        layout: 'sprites'
+      },
+      {
+        id: 'touyaSprites-3',
+        title: "Touya Closed Eyes",
+        image: 'https://i.postimg.cc/ZnrLh8zW/Touya-Closed-Eyes.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Touya',
+        layout: 'sprites'
+      },
+      {
+        id: 'touyaSprites-4',
+        title: "Touya Soft",
+        image: 'https://i.postimg.cc/MZR5RSMy/Touya-Soft.png',
+        category: 'Special Dialogue Sprites',
+        subCategory: 'Touya',
+        layout: 'sprites'
+      },
+
+      // --- REVIEW POLAROIDS ---
+      {
+        id: 'review-1',
+        title: "Tsukasa Review",
+        image: 'https://i.postimg.cc/65Xtdnz5/End-Tsukasa.png',
+        category: 'Review Photos',
+        layout: 'review'
+      },
+      {
+        id: 'review-2',
+        title: "Rui Review",
+        image: 'https://i.postimg.cc/FsVmGznH/End-Rui.png',
+        category: 'Review Photos',
+        layout: 'review'
+      },
+      {
+        id: 'review-3',
+        title: "Akito Review",
+        image: 'https://i.postimg.cc/3JF79Nb7/End-Akito.png',
+        category: 'Review Photos',
+        layout: 'review'
+      },
+      {
+        id: 'review-4',
+        title: "Touya Review",
+        image: 'https://i.postimg.cc/YqHM1Y8C/End-Touya.png',
+        category: 'Review Photos',
+        layout: 'review'
+      },
+
+      // --- DDLC ASSETS ---
+      // --- MAIN MENU ---
+      {
+        id: 'ddlc-1',
+        title: "Main Menu Background",
+        image: 'https://i.postimg.cc/FzDxjZ7v/DDLC-BG.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Main Menu',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-2',
+        title: "Main Menu Background Dark",
+        image: 'https://i.postimg.cc/tRc1BsZY/DDLC-BG-d.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Main Menu',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-3',
+        title: "Menu",
+        image: 'https://i.postimg.cc/VLTGkhP1/Side-Menu.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Main Menu',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-4',
+        title: "Menu Dark",
+        image: 'https://i.postimg.cc/nLNY83Mb/Side-Menu-d.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Main Menu',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-5',
+        title: "Circle",
+        image: 'https://i.postimg.cc/qBbnxg1B/DDLC-Circle.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Main Menu',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-6',
+        title: "Circle Dark",
+        image: 'https://i.postimg.cc/YqkcK3mn/DDLC-Circle-d.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Main Menu',
+        layout: 'ddlc'
+      },
+
+      // --- DIALOGUE ---
+      {
+        id: 'ddlc-7',
+        title: "Text Box",
+        image: 'https://i.postimg.cc/TYfctXjB/Textbox.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Dialogue',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-8',
+        title: "Text Box Dark",
+        image: 'https://i.postimg.cc/T1gtNZ9M/Textbox-d.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Dialogue',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-9',
+        title: "Name Box",
+        image: 'https://i.postimg.cc/L62VxMkw/Namebox.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Dialogue',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-10',
+        title: "Name Box Dark",
+        image: 'https://i.postimg.cc/PJYSVBM0/Namebox-d.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Dialogue',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-11',
+        title: "Button",
+        image: 'https://i.postimg.cc/SR6Qk5vY/Button.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Dialogue',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-12',
+        title: "Button Hover",
+        image: 'https://i.postimg.cc/D0rfnDMb/Button-Hover.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Dialogue',
+        layout: 'ddlc'
+      },
+
+      // --- POEM GAME ---
+      {
+        id: 'ddlc-13',
+        title: "Pen",
+        image: 'https://i.postimg.cc/hj0DLKyj/pen.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Poem Game',
+        layout: 'ddlc'
+      },
+      {
+        id: 'ddlc-14',
+        title: "Pen Hover",
+        image: 'https://i.postimg.cc/W37NGsWt/pen-select.png',
+        category: 'Doki Doki Literature Club Assets',
+        subCategory: 'Poem Game',
+        layout: 'ddlc'
+      },
+
+      // --- MISC ---
+      {
+        id: 'misc-1',
+        title: "Favicon",
+        image: 'https://i.postimg.cc/bwdt5PFr/Fantasista-Icon.png',
+        category: 'Miscellaneous',
+        layout: 'miscellaneous'
+      },
+      {
+        id: 'misc-2',
+        title: "Desk",
+        image: 'https://i.postimg.cc/0QFXjSx1/Desk-Texture.png',
+        category: 'Miscellaneous',
+        layout: 'miscellaneous'
+      },
+      {
+        id: 'misc-3',
+        title: "Classroom",
+        image: 'https://i.postimg.cc/MK1dV84X/School-Classroom.png',
+        category: 'Miscellaneous',
+        layout: 'miscellaneous'
+      },
+      {
+        id: 'misc-4',
+        title: "Placeholder Image",
+        image: '',
+        category: 'Miscellaneous',
+        layout: 'miscellaneous',
+        character: 'Rui'
+      }
+    ];
+
+    function App() {
+      const [searchQuery, setSearchQuery] = useState('');
+      const [selectedAssetIndex, setSelectedAssetIndex] = useState(null);
+      const [darkMode, setDarkMode] = useState(false);
+
+      // Filter items matching search input
+      const filteredItems = GALLERY_ITEMS.filter(item => 
+        item.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        (item.character && item.character.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.category && item.category.toLowerCase().includes(searchQuery.toLowerCase())) ||
+        (item.subCategory && item.subCategory.toLowerCase().includes(searchQuery.toLowerCase()))
+      );
+
+      const uniqueCategories = Array.from(new Set(GALLERY_ITEMS.map(item => item.category)));
+
+      const toggleTheme = () => {
+        setDarkMode(!darkMode);
+      };
+
+      useEffect(() => {
+        if (darkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      }, [darkMode]);
+
+      // Navigation helpers for light-box popout
+      const handlePrev = (e) => {
+        e.stopPropagation();
+        if (selectedAssetIndex === null) return;
+        const prevIndex = selectedAssetIndex === 0 ? filteredItems.length - 1 : selectedAssetIndex - 1;
+        setSelectedAssetIndex(prevIndex);
+      };
+
+      const handleNext = (e) => {
+        e.stopPropagation();
+        if (selectedAssetIndex === null) return;
+        const nextIndex = selectedAssetIndex === filteredItems.length - 1 ? 0 : selectedAssetIndex + 1;
+        setSelectedAssetIndex(nextIndex);
+      };
+
+      const openAssetModal = (assetId) => {
+        const index = filteredItems.findIndex(item => item.id === assetId);
+        if (index !== -1) {
+          setSelectedAssetIndex(index);
+        }
+      };
+
+      const selectedAsset = selectedAssetIndex !== null ? filteredItems[selectedAssetIndex] : null;
+
+      return (
+        <div className={`min-h-screen font-sans antialiased pb-16 transition-colors duration-300 ${
+          darkMode ? 'bg-slate-950 text-slate-100' : 'bg-[#fafafb] text-slate-800'
+        }`}>
+
+          {/* Sticky Header */}
+          <header className={`sticky top-0 z-30 border-b backdrop-blur-md transition-colors duration-300 ${
+            darkMode ? 'bg-slate-950/90 border-slate-900' : 'bg-white/90 border-slate-200'
+          }`}>
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+              
+              {/* Brand Logo & Title on Left */}
+              <div className="flex items-center gap-3">
+                <img 
+                  src="https://i.postimg.cc/bwdt5PFr/Fantasista-Icon.png" 
+                  alt="Fantasista Icon" 
+                  className="w-9 h-9 object-contain"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://file.garden/abuoURIn4hVA2XAy/MISC/Placeholder.png";
+                  }}
+                />
+                <div>
+                  <h1 className={`text-base font-bold tracking-tight transition-colors ${
+                    darkMode ? 'text-white' : 'text-slate-950'
+                  }`}>
+                    Doki Doki Fantasista SQUAD Poem Game Assets
+                  </h1>
+                </div>
+              </div>
+
+              {/* Search Bar & Theme Toggle Container on Right */}
+              <div className="flex items-center gap-3 w-full sm:w-auto justify-end">
+                
+                {/* Search Input */}
+                <div className="relative w-full sm:w-72">
+                  <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                  
+                  <input
+                    type="text"
+                    placeholder="Search..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className={`w-full pl-9 pr-4 py-1.5 rounded-none text-xs border focus:outline-none transition-all ${
+                      darkMode 
+                        ? 'bg-slate-900 border-slate-800 text-slate-200 focus:border-indigo-500 placeholder-slate-500' 
+                        : 'bg-slate-50 border-slate-200 text-slate-800 focus:border-[#24a19c] placeholder-slate-400'
+                    }`}
+                  />
+                  {searchQuery && (
+                    <button onClick={() => setSearchQuery('')} className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600">
+                      ✕
+                    </button>
+                  )}
+                </div>
+
+                {/* Theme Toggle Button next to Search Bar */}
+                <button 
+                  onClick={toggleTheme}
+                  title={darkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
+                  className={`w-8 h-8 border flex items-center justify-center transition-all ${
+                    darkMode 
+                      ? 'border-slate-800 bg-slate-900/60 text-white hover:bg-slate-800' 
+                      : 'border-slate-200 bg-slate-50 text-slate-700 hover:bg-slate-100'
+                  }`}
+                >
+                  {darkMode ? (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 100 8 4 4 0 000-8z"></path>
+                    </svg>
+                  ) : (
+                    <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+                    </svg>
+                  )}
+                </button>
+
+              </div>
+            </div>
+          </header>
+
+          {/* Banner header backdrop */}
+          <div className="relative w-full h-56 md:h-64 overflow-hidden bg-cover bg-top-center" style={{ 
+            backgroundImage: "url('https://i.postimg.cc/xd0NwsW4/Header.png')" 
+          }}>
+            {/* Bottom Fade Gradient to blend with content */}
+            <div className={`absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t ${
+              darkMode ? 'from-slate-950 to-transparent' : 'from-[#fafafb] to-transparent'
+            }`}></div>
+          </div>
+
+          {/* Main Content Area */}
+          <main className="max-w-7xl mx-auto px-4 sm:px-6 py-8 flex flex-col gap-12">
+
+            <p className="text-slate-500 text-sm">
+                        All images are free to use as long as you follow the rules of the original copyright holder. However, I would appreciate being credited (Kamisato Ajax) for the notebook assets, as I made them myself.
+                    </p>
+
+            {uniqueCategories.map((categoryName) => {
+              const categoryItems = filteredItems.filter(item => item.category === categoryName);
+              
+              if (categoryItems.length === 0) return null;
+
+              const subCategoryNames = Array.from(new Set(categoryItems.map(item => item.subCategory || '')));
+
+              return (
+                <section key={categoryName} className="flex flex-col gap-6">
+                  
+                  {/* Category Main Heading */}
+                  <div className={`border-b pb-2 ${darkMode ? 'border-slate-900' : 'border-slate-200'}`}>
+                    <h2 className={`text-lg font-bold tracking-tight transition-colors ${
+                      darkMode ? 'text-white' : 'text-slate-800'
+                    }`}>
+                      {categoryName}
+                    </h2>
+                  </div>
+
+                  <div className="flex flex-col gap-8">
+                    {subCategoryNames.map((subCatName) => {
+                      const subCatItems = categoryItems.filter(
+                        item => (item.subCategory || '') === subCatName
+                      );
+
+                      if (subCatItems.length === 0) return null;
+
+                      return (
+                        <div key={subCatName || 'unassigned'} className="flex flex-col gap-4">
+                          
+                          {/* Sub-heading */}
+                          {subCatName && (
+                            <div className="pt-1">
+                              <h3 className={`text-xs font-bold tracking-wide uppercase ${
+                                darkMode ? 'text-slate-400' : 'text-slate-500'
+                              }`}>
+                                {subCatName}
+                              </h3>
+                            </div>
+                          )}
+
+                          {/* Grid Grid Container */}
+                          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-x-6 gap-y-8 pt-2 items-stretch">
+                            {subCatItems.map((item) => {
+                              return (
+                                <div 
+                                  key={item.id} 
+                                  onClick={() => openAssetModal(item.id)}
+                                  className="group flex flex-col cursor-pointer justify-between h-full bg-transparent"
+                                >
+                                  {/* Grid Media Box */}
+                                  <div className="relative flex-1 w-full min-h-[140px] sm:min-h-[180px] overflow-hidden flex items-center justify-center bg-transparent">
+                                    <img
+                                      src={item.image}
+                                      alt={item.title}
+                                      className="max-h-[180px] max-w-full object-contain transition-transform duration-300 group-hover:scale-105 rounded-none"
+                                      onError={(e) => {
+                                        e.target.onerror = null;
+                                        e.target.src = "https://file.garden/abuoURIn4hVA2XAy/MISC/Placeholder.png";
+                                      }}
+                                    />
+                                  </div>
+
+                                  {/* Caption Label */}
+                                  <div className="mt-3 flex flex-col gap-0.5 text-center">
+                                    <p className={`text-xs font-medium leading-relaxed transition-colors line-clamp-2 ${
+                                      darkMode ? 'text-slate-400 group-hover:text-white' : 'text-slate-500 group-hover:text-slate-950'
+                                    }`}>
+                                      {item.title}
+                                    </p>
+                                  </div>
+
+                                </div>
+                              );
+                            })}
+                          </div>
+
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                </section>
+              );
+            })}
+
+            {/* Empty state if search returns nothing */}
+            {filteredItems.length === 0 && (
+                <div className="text-center py-16">
+                    <p className="text-slate-500 text-sm">
+                        No search-
+                    </p>
+                    <p className="text-slate-500 text-sm">
+                        I know you can hear me.
+                    </p>
+                    <p className="text-slate-500 text-sm">
+                        After all this time, I still can't have you to myself.
+                    </p>
+                    <p className="mt-6 text-[#bb88ee] font-bold text-xl italic rotate-2">
+                        {"Please don't leave me.".split("").map((char, i) => (
+                            <span key={i} style={{ opacity: 1 - i * 0.04, filter: `blur(${i * 0.1}px)` }}>
+                                {char}
+                            </span>
+                        ))}
+                    </p>
+                </div>
+            )}
+
+          </main>
+
+          {/* Lightbox Modal window */}
+          {selectedAsset && (
+            <div 
+              className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/80 backdrop-blur-xs animate-fadeIn"
+              onClick={() => setSelectedAssetIndex(null)}
+            >
+              <div 
+                className={`relative shadow-2xl max-w-5xl w-full overflow-hidden flex flex-col border rounded-none transition-colors duration-300 ${
+                  darkMode ? 'bg-slate-950 border-slate-800' : 'bg-white border-slate-300/60'
+                }`}
+                onClick={(e) => e.stopPropagation()}
+              >
+                
+                {/* Top Bar */}
+                <div className={`flex items-center justify-between px-6 py-4 border-b ${
+                  darkMode ? 'bg-slate-900/50 border-slate-800' : 'bg-white border-slate-200'
+                }`}>
+                  <div className="flex items-baseline gap-2">
+                    <span className={`text-sm font-bold ${darkMode ? 'text-white' : 'text-slate-900'}`}>
+                      {selectedAsset.title}
+                    </span>
+                    <span className="text-slate-300">|</span>
+                    <a 
+                      href={selectedAsset.image} 
+                      target="_blank" 
+                      rel="noreferrer" 
+                      className="text-xs text-[#24a19c] hover:underline"
+                    >
+                      Full size image
+                    </a>
+                  </div>
+                  <button
+                    onClick={() => setSelectedAssetIndex(null)}
+                    className={`p-1 rounded-none transition-colors ${
+                      darkMode ? 'hover:bg-slate-800 text-slate-400 hover:text-white' : 'hover:bg-slate-100 text-slate-500 hover:text-slate-800'
+                    }`}
+                    aria-label="Close modal"
+                  >
+                    {/* Close Icon */}
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <line x1="18" y1="6" x2="6" y2="18"></line>
+                      <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                  </button>
+                </div>
+
+                {/* Visual Display */}
+                <div className="relative flex items-center justify-between p-6 min-h-[400px] md:min-h-[500px]">
+                  
+                  {/* Left Arrow */}
+                  <button
+                    onClick={handlePrev}
+                    className={`p-2 rounded-none transition-all shrink-0 z-10 ${
+                      darkMode ? 'text-slate-500 hover:text-white hover:bg-slate-900/80' : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100/80'
+                    }`}
+                    aria-label="Previous image"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <polyline points="15 18 9 12 15 6"></polyline>
+                    </svg>
+                  </button>
+
+                  {/* Image Frame */}
+                  <div className="flex-1 flex justify-center items-center max-h-[70vh] px-4">
+                    <img
+                      src={selectedAsset.image}
+                      alt={selectedAsset.title}
+                      className="max-h-[60vh] max-w-full object-contain"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://file.garden/abuoURIn4hVA2XAy/MISC/Placeholder.png";
+                      }}
+                    />
+                  </div>
+
+                  {/* Right Arrow */}
+                  <button
+                    onClick={handleNext}
+                    className={`p-2 rounded-none transition-all shrink-0 z-10 ${
+                      darkMode ? 'text-slate-500 hover:text-white hover:bg-slate-900/80' : 'text-slate-400 hover:text-slate-800 hover:bg-slate-100/80'
+                    }`}
+                    aria-label="Next image"
+                  >
+                    <svg className="w-6 h-6" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                      <polyline points="9 18 15 12 9 6"></polyline>
+                    </svg>
+                  </button>
+
+                </div>
+
+              </div>
+            </div>
+          )}
+
+          {/* CSS Animations */}
+          <style>{`
+            @keyframes fadeIn {
+              from { opacity: 0; }
+              to { opacity: 1; }
+            }
+            .animate-fadeIn {
+              animation: fadeIn 0.15s ease-out forwards;
+            }
+          `}</style>
+
+        </div>
+      );
+    }
+
+    // Render App
+    const container = document.getElementById('root');
+    const root = ReactDOM.createRoot(container);
+    root.render(<App />);
+  </script>
+</body>
+</html>
